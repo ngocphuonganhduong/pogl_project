@@ -64,7 +64,7 @@ namespace pogl {
     void init_glut(int &argc, char *argv[]) {
         //glewExperimental = GL_TRUE;
         glutInit(&argc, argv);
-        glutInitContextVersion(4, 5);
+        glutInitContextVersion(4, 2);
         glutInitContextProfile(GLUT_CORE_PROFILE | GLUT_DEBUG);
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
         glutInitWindowSize(width, height);
