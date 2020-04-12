@@ -38,18 +38,14 @@ namespace pogl {
     void display() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         TEST_OPENGL_ERROR();
-        for (auto vbo: vbo_list) {
-            glBindVertexArray(vbo.first);
-            glDrawArrays(GL_TRIANGLES, 0, vbo.second.size());
-            TEST_OPENGL_ERROR();
-            glBindVertexArray(0);
-            TEST_OPENGL_ERROR();
-
+        for (auto o: objects) {
+            o.draw();
         }
+        glBindVertexArray(0);
 
         if (saved) {
             tifo::rgb24_image *texture = new tifo::rgb24_image(800, 590);
-            glReadPixels(150, 350, 800, 590, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
+            glReadPixels(150, 250, 800, 590, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
             TEST_OPENGL_ERROR();
             //glReadPixels(0, 0, 1024, 1024, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
             tifo::save_image(*texture, "render.tga");

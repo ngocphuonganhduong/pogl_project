@@ -9,8 +9,6 @@
 
 
 class Vector3 {
-private:
-    float val[3]{0, 0, 0};
 
 public:
     constexpr float x() const noexcept {
@@ -119,6 +117,7 @@ public:
     }
 
 
+    float val[3]{0, 0, 0};
 };
 
 

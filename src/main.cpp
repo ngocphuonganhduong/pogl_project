@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     width = 1024;
     height = 1024;
     #if defined(SAVE_RENDER)
-        saved = false;
+        saved = true;
     #endif
 
     init_glut(argc, argv);
@@ -67,12 +67,34 @@ int main(int argc, char *argv[]) {
     Vector3 up(0, 1, 0);
     prog->init_projection_view_matrices(eye, center, up, "projection", "view");
 
-    prog->add_vbo(teapot_vbd, "position", 3);
+    matrix4 transformation = matrix4::identity();
+    transformation.scaled(0.5, 0.5, 0.5);
+    transformation.rotated(30, 30,0);
+    transformation.translated(-2, 0, -10);
+
+
+    prog->add_vbo(teapot_vbd, "position", 3, transformation);
     prog->add_data(normal_flat_buffer_data, "normalFlat", 3);
     prog->add_data(normal_smooth_buffer_data, "normalSmooth", 3);
     prog->add_data(color_buffer_data, "color", 3);
     prog->add_data(uv_buffer_data, "uv", 2); //2D
 
+
+
+    //second object
+    matrix4 transformation2 = matrix4::identity();
+    transformation2.scaled(0.5, 0.5, 0.5);
+    transformation2.rotated(-30, 180,20);
+    transformation2.translated(2, 0, -10);
+    prog->add_vbo(teapot_vbd, "position", 3, transformation2);
+
+    prog->add_data(normal_flat_buffer_data, "normalFlat", 3);
+    prog->add_data(normal_smooth_buffer_data, "normalSmooth", 3);
+    prog->add_data(color_buffer_data, "color", 3);
+    prog->add_data(uv_buffer_data, "uv", 2); //2D
+
+
+    //texture
     prog->add_texture("../textures/texture.tga", "texture_sampler", GL_TEXTURE0);
     prog->add_texture("../textures/lighting.tga", "lighting_sampler", GL_TEXTURE1);
     prog->add_texture("../textures/normalmap.tga", "normalmap_sampler", GL_TEXTURE2);

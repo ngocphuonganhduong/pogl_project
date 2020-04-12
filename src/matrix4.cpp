@@ -41,7 +41,17 @@ namespace pogl {
         tmat.mat[2][2] = 1;
         tmat.mat[2][3] = z;
         tmat.mat[3][3] = 1;
-        *this *= tmat;
+        *this *= tmat.transpose();
+        return *this;
+    }
+
+    matrix4 &matrix4::scaled(float x, float y, float z) {
+        matrix4 tmat;
+        tmat.mat[0][0] = x;
+        tmat.mat[1][1] = y;
+        tmat.mat[2][2] = z;
+        tmat.mat[3][3] = 1;
+        *this *= tmat.transpose();
         return *this;
     }
 
@@ -57,6 +67,34 @@ namespace pogl {
                 mat[i][j] = mat[j][i];
                 mat[j][i] = v;
             }
+
+        return *this;
+    }
+
+    matrix4 &matrix4::rotated(float degree_x_axis, float degree_y_axis, float degree_z_axis) {
+        float rad = degree_x_axis * M_PI / 180;
+        matrix4 rotate = identity();
+        rotate.mat[1][1] = cosf(rad);
+        rotate.mat[1][2] = -sinf(rad);
+        rotate.mat[2][1] = sinf(rad);
+        rotate.mat[2][2] = cosf(rad);
+        *this *= rotate.transpose();
+
+        rad = degree_y_axis * M_PI / 180;
+        rotate = identity();
+        rotate.mat[0][0] = cosf(rad);
+        rotate.mat[0][2] = sinf(rad);
+        rotate.mat[2][0] = -sinf(rad);
+        rotate.mat[2][2] = cosf(rad);
+        *this *= rotate.transpose();
+
+        rad = degree_z_axis * M_PI / 180;
+        rotate = identity();
+        rotate.mat[0][0] = cosf(rad);
+        rotate.mat[0][1] = -sinf(rad);
+        rotate.mat[1][0] = sinf(rad);
+        rotate.mat[1][1] = cosf(rad);
+        *this *= rotate.transpose();
 
         return *this;
     }
@@ -109,9 +147,11 @@ namespace pogl {
         mul.mat[2][1] = -forward.y();
         mul.mat[2][2] = -forward.z();
 
+        //The next 3 lines = mul.translated(eye * -1);
         mul.mat[0][3] = eye.dot(right) * -1;
         mul.mat[1][3] = eye.dot(up) * -1;
         mul.mat[2][3] = eye.dot(forward);
+
         mat *= mul;
 
         mat.transpose();

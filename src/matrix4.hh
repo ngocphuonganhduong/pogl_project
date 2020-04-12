@@ -17,6 +17,9 @@ namespace pogl {
 
         matrix4 &translated(float x, float y, float z);
         matrix4 &translated(const Vector3& v);
+        matrix4 &scaled(float x, float y, float z);
+        matrix4 &rotated(float degree_x_axis, float degree_y_axis, float degree_z_axis);
+
         matrix4 &transpose();
         static matrix4 identity();
 

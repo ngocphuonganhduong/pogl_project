@@ -9,16 +9,18 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "vector3.hh"
-//
-//#define TEST_OPENGL_ERROR2(name)                 \
-//  do {                                          \
-//    GLenum err = glGetError();                  \
-//    if (err != GL_NO_ERROR)                     \
-//        std::cerr << "OpenGL ERROR "            \
-//        << err << ": " << gluErrorString(err) \
-//        << name << std::endl;                   \
-//  } while(0)
+#include <tuple>
+#include "object.hh"
+
+#define TEST_OPENGL_ERROR2(name)                 \
+  do {                                          \
+    GLenum err = glGetError();                  \
+    if (err != GL_NO_ERROR)                     \
+        std::cerr << "OpenGL ERROR "            \
+        << err << ": " << gluErrorString(err)   \
+        << " at position: "                     \
+        << name << std::endl;                   \
+  } while(0)
 
 #define TEST_OPENGL_ERROR()                                                             \
   do {                                    \
@@ -31,7 +33,8 @@ namespace pogl {
     extern float width;
     extern float height;
     extern bool saved;
-    extern std::vector<std::pair<GLuint, std::vector<GLfloat>>> vbo_list;
+
+    extern std::vector<Object> objects;
 
     class Program {
     public:
@@ -48,13 +51,17 @@ namespace pogl {
 
         static GLuint compile_shader(GLenum type, const std::string &src);
 
+
         void add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
-                     const char *var_name, GLint nb_components);
+                     const char *var_name, GLint nb_components, const matrix4& transformation);
+
+        void add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
+                     const char *var_name, GLint nb_components, const matrix4& transformation, const Vector3 &uniform_color);
 
         void add_data(const std::vector<GLfloat> &vertex_buffer_data,
                       const char *var_name, GLint nb_components);
 
-        void add_texture(const char *path, const char *var_name,  GLenum texture_unit);
+        void add_texture(const char *path, const char *var_name, GLenum texture_unit);
 
         void init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
                                            const char *pro_name, const char *view_name);

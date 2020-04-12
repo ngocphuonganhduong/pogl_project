@@ -1,7 +1,8 @@
 #version 420
 
 out vec3 color;
+uniform vec3 uniform_color;
 
 void main() {
-    color = vec3(0, 0, 1);
+    color = uniform_color;
 }

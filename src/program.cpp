@@ -4,7 +4,6 @@
 
 #include <GL/glew.h>
 #include "program.hh"
-#include "matrix4.hh"
 #include "vbo/teapot.hh"
 #include "image_io.hh"
 
@@ -12,7 +11,8 @@ namespace pogl {
     float width = 720;
     float height = 480;
     bool saved = false;
-    std::vector<std::pair<GLuint, std::vector<GLfloat>>> vbo_list;
+
+    std::vector<Object> objects;
 
     Program::Program() {}
 
@@ -49,7 +49,14 @@ namespace pogl {
 
     }
 
-    void Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components) {
+    void Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
+                          const matrix4 &transformation) {
+
+        add_vbo(vb_data, var_name, nb_components, transformation, Vector3(1));
+    }
+
+    void Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
+                          const matrix4 &transformation, const Vector3 &uniform_color) {
         GLuint vbo_id;
 
         glGenVertexArrays(1, &vbo_id);
@@ -58,13 +65,12 @@ namespace pogl {
         glBindVertexArray(vbo_id);
         TEST_OPENGL_ERROR();
 
-        vbo_list.push_back(std::make_pair(vbo_id, vb_data));
+        objects.push_back(Object(pg_id, vbo_id, vb_data, transformation, uniform_color));
 
         glBindVertexArray(vbo_id);
         TEST_OPENGL_ERROR();
 
         add_data(vb_data, var_name, nb_components);
-
     }
 
     GLuint Program::compile_shader(GLenum type, const std::string &source) {
