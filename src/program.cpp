@@ -160,6 +160,8 @@ namespace pogl {
         matrix4 view = matrix4::identity();
         look_at(view, eye, center, up);
 
+        int uniform_windowSize = glGetUniformLocation(pg_id, "windowsize");
+
         glUseProgram(pg_id);
         TEST_OPENGL_ERROR();
 
@@ -170,6 +172,9 @@ namespace pogl {
 
         GLuint view_mat_id = glGetUniformLocation(pg_id, view_name);
         glUniformMatrix4fv(view_mat_id, 1, GL_FALSE, &view.mat[0][0]);
+        TEST_OPENGL_ERROR();
+
+        glUniform2f(uniform_windowSize, width, height);
         TEST_OPENGL_ERROR();
     }
 
