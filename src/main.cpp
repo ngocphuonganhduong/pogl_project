@@ -9,6 +9,7 @@
 
 //#define SAVE_RENDER
 using namespace pogl;
+using namespace std;
 
 std::string load(const std::string &filename) {
     std::ifstream input_src_file(filename, std::ios::in);
@@ -40,9 +41,16 @@ int main(int argc, char *argv[]) {
         return 1;
     init_GL();
 
+    if (argc < 2)
+    {
+        cout << "usage:\n  ./pogl shader_name" << endl;
+        cout << "shaders:\n - tp3_test\n - sepia\n - test" << endl;
+        return 1;
+    }
+
     //path from build folder
-    std::string vertex_src = load("../src/shaders/tp3_test/vertex.shd");
-    std::string fragment_src = load("../src/shaders/tp3_test/fragment.shd");
+    std::string vertex_src = load("../src/shaders/" + string(argv[1]) + "/vertex.shd");
+    std::string fragment_src = load("../src/shaders/" + string(argv[1]) + "/fragment.shd");
 
     shared_prog prog = Program::make_program(vertex_src, fragment_src);
 
