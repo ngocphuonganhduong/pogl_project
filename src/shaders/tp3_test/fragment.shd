@@ -11,6 +11,6 @@ in vec4 interpolated_color;
 void main() {
     vec4 c = texture2D(texture_sampler, interpolated_uv_position);
     vec4 l = texture2D(lighting_sampler, interpolated_uv_position);
-    output_color = c * l;
+    output_color = interpolated_color * c;
 
 }
