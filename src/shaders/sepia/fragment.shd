@@ -9,10 +9,11 @@ in vec2 interpolated_uv_position;
 in vec4 interpolated_color;
 
 void main() {
+    vec4 c = texture2D(texture_sampler, interpolated_uv_position);
 
     // greyscale
     vec4 greyfac = vec4(0.21, 0.72, 0.07, 0);
-    float grey = dot(interpolated_color, greyfac);
+    float grey = dot(interpolated_color*c, greyfac);
 
     vec4 sepia = vec4(1.55, 0.92, 0.28, 1);
     output_color = vec4(grey)*sepia;

@@ -4,9 +4,7 @@ uniform mat4 projection;
 uniform mat4 transformation;
 
 in vec3 position;
-in vec3 normalFlat;
-in vec3 normalSmooth;
-in vec3 color;
+in vec3 normal;
 in vec2 uv;
 
 vec3 light_color = vec3(1.0, 1.0, 1.0);
@@ -17,13 +15,13 @@ out vec4 interpolated_color;
 
 void main() {
     vec4 new_pos =  transformation * vec4(position, 1.0);
-    vec3 new_normal = (transformation * vec4(normalSmooth, 0.0)).xyz;
+    vec3 new_normal = (transformation * vec4(normal, 0.0)).xyz;
 
     vec3 light_dir = light_position - new_pos.xyz;
     float coef = dot(normalize(new_normal), normalize(light_dir));
 
     coef = clamp(coef, 0, 1);
-    interpolated_color = vec4(color * coef * light_color, 1.0);
+    interpolated_color = vec4(coef * light_color, 1.0);
 
     gl_Position = projection * view * new_pos;
     interpolated_uv_position = uv;

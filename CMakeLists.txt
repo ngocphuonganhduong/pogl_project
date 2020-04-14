@@ -2,17 +2,26 @@ cmake_minimum_required(VERSION 3.15)
 project(pogl)
 set(CMAKE_CXX_STANDARD 17)
 
-set(HEADER
-            src/matrix4.hh
-            src/object.hh)
+set(HEADER src/stb_image.h
+            src/utils/matrix4.hh
+            src/utils/vector3.hh
+            src/utils/image_io.hh
+            src/utils/image.hh
+            src/object.hh
+            src/texture.hh
+            src/program.hh
+            src/init.hh
+        )
 
-set(SOURCE src/image.cpp
-            src/image_io.cpp
-            src/matrix4.cpp
+set(SOURCE src/utils/image.cpp
+            src/utils/image_io.cpp
+            src/utils/matrix4.cpp
             src/object.cpp
             src/program.cpp
             src/init.cpp
+            src/texture.cpp
         )
+
 add_executable(pogl src/main.cpp ${HEADER} ${SOURCE})
 add_executable(test1 src/test1.cpp ${HEADER} ${SOURCE})
 

@@ -3,16 +3,16 @@
 //
 
 #include <GL/glew.h>
+
 #include "program.hh"
 #include "vbo/teapot.hh"
-#include "image_io.hh"
 
 namespace pogl {
     float width = 720;
     float height = 480;
     bool saved = false;
 
-    std::vector<Object> objects;
+    std::vector<shared_obj> objects;
 
     Program::Program() {}
 
@@ -49,13 +49,13 @@ namespace pogl {
 
     }
 
-    void Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
+    shared_obj Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
                           const matrix4 &transformation) {
 
-        add_vbo(vb_data, var_name, nb_components, transformation, Vector3(1));
+        return add_vbo(vb_data, var_name, nb_components, transformation, Vector3(1));
     }
 
-    void Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
+    shared_obj Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
                           const matrix4 &transformation, const Vector3 &uniform_color) {
         GLuint vbo_id;
 
@@ -65,12 +65,14 @@ namespace pogl {
         glBindVertexArray(vbo_id);
         TEST_OPENGL_ERROR();
 
-        objects.push_back(Object(pg_id, vbo_id, vb_data, transformation, uniform_color));
+        shared_obj obj = std::make_shared<Object>(pg_id, vbo_id, vb_data, transformation, uniform_color);
+        objects.push_back(obj);
 
         glBindVertexArray(vbo_id);
         TEST_OPENGL_ERROR();
 
         add_data(vb_data, var_name, nb_components);
+        return obj;
     }
 
     GLuint Program::compile_shader(GLenum type, const std::string &source) {
@@ -184,24 +186,17 @@ namespace pogl {
         TEST_OPENGL_ERROR();
     }
 
-    void Program::add_texture(const char *path, const char *var_name, GLenum texture_unit) {
-        tifo::rgb24_image *texture = tifo::load_image(path);
+    void Program::add_texture(shared_text texture) {
         GLuint texture_id;
-        GLint location;
-        std::cout << var_name << ": " << texture->sx << " ," << texture->sy << "\n";
+  //      GLint location;
 
         glGenTextures(1, &texture_id);
         TEST_OPENGL_ERROR();
-        glActiveTexture(texture_unit);
+        glActiveTexture(GL_TEXTURE0 + texture->unit);
         TEST_OPENGL_ERROR();
         glBindTexture(GL_TEXTURE_2D, texture_id);
         TEST_OPENGL_ERROR();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->sx, texture->sy, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
-        TEST_OPENGL_ERROR();
-        location = glGetUniformLocation(pg_id, var_name);
-        TEST_OPENGL_ERROR();
-        std::cout << "location " << location << std::endl;
-        glUniform1i(location, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->sx, texture->sy, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->img_data);
         TEST_OPENGL_ERROR();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -213,7 +208,7 @@ namespace pogl {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         TEST_OPENGL_ERROR();
 
-        delete texture;
+
     }
 
 

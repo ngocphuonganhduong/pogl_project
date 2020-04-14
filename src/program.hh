@@ -34,7 +34,7 @@ namespace pogl {
     extern float height;
     extern bool saved;
 
-    extern std::vector<Object> objects;
+    extern std::vector<shared_obj> objects;
 
     class Program {
     public:
@@ -52,16 +52,17 @@ namespace pogl {
         static GLuint compile_shader(GLenum type, const std::string &src);
 
 
-        void add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
-                     const char *var_name, GLint nb_components, const matrix4& transformation);
+        shared_obj add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
+                           const char *var_name, GLint nb_components, const matrix4 &transformation);
 
-        void add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
-                     const char *var_name, GLint nb_components, const matrix4& transformation, const Vector3 &uniform_color);
+        shared_obj add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
+                           const char *var_name, GLint nb_components, const matrix4 &transformation,
+                           const Vector3 &uniform_color);
 
         void add_data(const std::vector<GLfloat> &vertex_buffer_data,
                       const char *var_name, GLint nb_components);
 
-        void add_texture(const char *path, const char *var_name, GLenum texture_unit);
+        void add_texture(shared_text texture);
 
         void init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
                                            const char *pro_name, const char *view_name);

@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "init.hh"
-#include "image_io.hh"
+#include "utils/image_io.hh"
 
 namespace pogl {
 
@@ -39,7 +39,7 @@ namespace pogl {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         TEST_OPENGL_ERROR();
         for (auto o: objects) {
-            o.draw();
+            o->draw();
         }
         glBindVertexArray(0);
 
