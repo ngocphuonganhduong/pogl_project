@@ -5,6 +5,7 @@
 #include <GL/freeglut.h>
 #include "init.hh"
 #include "utils/image_io.hh"
+#include "utils/misc.hh"
 
 namespace pogl {
 
@@ -34,15 +35,30 @@ namespace pogl {
         TEST_OPENGL_ERROR();
     }
 
-
+    void timer_func(int v)
+    {
+        glutPostRedisplay();
+    }
     void display() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         TEST_OPENGL_ERROR();
+        for (auto p: programs)
+        {
+//            int location = glGetUniformLocation(p->program_id(), "current_time");
+//            glUniform1f(location,  glutGet(GLUT_ELAPSED_TIME));
+//            TEST_OPENGL_ERROR();
+            int location = glGetUniformLocation(p->program_id(), "rnd");
+            glUniform1f(location,random1());
+            TEST_OPENGL_ERROR();
+            location = glGetUniformLocation(p->program_id(), "rnd2");
+            glUniform1f(location, drand48());
+            TEST_OPENGL_ERROR();
+        }
+
         for (auto o: objects) {
             o->draw();
         }
         glBindVertexArray(0);
-
         if (saved) {
             tifo::rgb24_image *texture = new tifo::rgb24_image(800, 590);
             glReadPixels(150, 250, 800, 590, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
@@ -54,8 +70,9 @@ namespace pogl {
             //saved = true;
         }
         glutSwapBuffers();
-
+        glutTimerFunc(fpms, timer_func, 0);
     }
+
 
     void init_glut(int &argc, char *argv[]) {
         //glewExperimental = GL_TRUE;

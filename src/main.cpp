@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     stbi_set_flip_vertically_on_load(true);
     shared_text texture1 = Texture::create("../textures/texture.tga");
     prog->add_texture(texture1);
-    shared_text brick = Texture::create("../textures/redbrick.jpg");
+    shared_text brick = Texture::create("../textures/wood.jpg");
     prog->add_texture(brick);
 
 

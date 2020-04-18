@@ -11,8 +11,10 @@ namespace pogl {
     float width = 720;
     float height = 480;
     bool saved = false;
+    float fpms = 30; //frame per mili second
 
     std::vector<shared_obj> objects;
+    std::vector<shared_prog> programs;
 
     Program::Program() {}
 
@@ -50,13 +52,13 @@ namespace pogl {
     }
 
     shared_obj Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
-                          const matrix4 &transformation) {
+                                const matrix4 &transformation) {
 
         return add_vbo(vb_data, var_name, nb_components, transformation, Vector3(1));
     }
 
     shared_obj Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
-                          const matrix4 &transformation, const Vector3 &uniform_color) {
+                                const matrix4 &transformation, const Vector3 &uniform_color) {
         GLuint vbo_id;
 
         glGenVertexArrays(1, &vbo_id);
@@ -146,8 +148,7 @@ namespace pogl {
             }
         }
         p->isReady = link_status == GL_TRUE;
-
-
+        programs.push_back(p);
         return p;
     }
 
@@ -188,7 +189,7 @@ namespace pogl {
 
     void Program::add_texture(shared_text texture) {
         GLuint texture_id;
-  //      GLint location;
+        //      GLint location;
 
         glGenTextures(1, &texture_id);
         TEST_OPENGL_ERROR();
@@ -196,7 +197,8 @@ namespace pogl {
         TEST_OPENGL_ERROR();
         glBindTexture(GL_TEXTURE_2D, texture_id);
         TEST_OPENGL_ERROR();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->sx, texture->sy, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->img_data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->sx, texture->sy, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                     texture->img_data);
         TEST_OPENGL_ERROR();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -209,6 +211,10 @@ namespace pogl {
         TEST_OPENGL_ERROR();
 
 
+    }
+
+    GLuint Program::program_id() const {
+        return this->pg_id;
     }
 
 

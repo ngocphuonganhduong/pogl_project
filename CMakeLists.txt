@@ -3,6 +3,7 @@ project(pogl)
 set(CMAKE_CXX_STANDARD 17)
 
 set(HEADER src/stb_image.h
+            src/utils/misc.hh
             src/utils/matrix4.hh
             src/utils/vector3.hh
             src/utils/image_io.hh
@@ -15,6 +16,7 @@ set(HEADER src/stb_image.h
 
 set(SOURCE src/utils/image.cpp
             src/utils/image_io.cpp
+            src/utils/misc.cpp
             src/utils/matrix4.cpp
             src/object.cpp
             src/program.cpp

@@ -33,7 +33,7 @@ namespace pogl {
     extern float width;
     extern float height;
     extern bool saved;
-
+    extern float fpms; //frame per mili second
     extern std::vector<shared_obj> objects;
 
     class Program {
@@ -70,6 +70,7 @@ namespace pogl {
 
         bool is_ready();
 
+        GLuint program_id() const;
 
     private:
         GLuint pg_id; //program id
@@ -79,6 +80,8 @@ namespace pogl {
     };
 
     using shared_prog = std::shared_ptr<Program>;
+    extern std::vector<shared_prog> programs;
+
 
 }
 
