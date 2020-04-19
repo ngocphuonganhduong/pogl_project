@@ -1,13 +1,20 @@
 #version 420
 
 uniform sampler2D texture_sampler;
-uniform float rnd; // [0.0-1.0]rnd is different per frame but it is the same for all pixels
+uniform float rnd; // [0.0-1.0] rnd is different each frame but it is the same for all pixels in a frame
 uniform float rnd2; //same as rnd2 but [0.0-1.0), used to decide shifting method
+uniform int current_time; //same as rnd2 but [0.0-1.0), used to decide shifting method
 
 float M_PI = 3.14159265;
-float n = 5;
-float intensity = 0.002;
-float horizontal_prob = 0.8;
+float n = 5; //number of segments for horizontal and vertical shift (divide the texture image into n horizontal/vertical segments)
+float intensity = 0.002; //control the amount of shifting displacement per segment
+
+//prob/bias for roussian roulette to decide shifting method
+float horizontal_shift_prob = 0.4;
+float vertical_shift_prob = 0.3;
+float horizontal_line_prob = 0.25;
+
+float pos = float(current_time % 100) / 100.0f; //divide image in 100 segments (horizontal/vertical line)
 
 layout(location=0) out vec4 output_color;
 
@@ -15,7 +22,7 @@ in vec2 interpolated_uv;
 
 float displacement_func(float n)
 {
-    return n * sin(n * M_PI) + n * cos(n * M_PI);
+    return n * sin(n * M_PI) + n * cos(n * M_PI); //this function makes the displacement more uniformly random
 }
 
 float delta; // amount of shift
@@ -27,7 +34,7 @@ vec2 horizontal_shift(vec2 uv) {
     delta = displacement_func(rnd+i/n)* intensity;
 
     //check if the current position/uv is in the segment
-    if(uv.y >= i/n && uv.y <= (i + 1)/n)
+    if(uv.y >= i/n && uv.y <= (i + 1)/n) //vertical segment->horizontal shift
         uv.x += delta;
     }
     return uv;
@@ -40,8 +47,25 @@ vec2 vertical_shift(vec2 uv) {
     delta = displacement_func(rnd+i/n)* intensity;
 
     //check if the current position/uv is in the segment
-    if(uv.x >= i/n && uv.x <= (i + 1)/n)
+    if(uv.x >= i/n && uv.x <= (i + 1)/n) //horizontal segment->vertical shift
         uv.y += delta;
+    }
+    return uv;
+}
+
+vec2 horizontal_line(vec2 uv) {
+    delta = rnd2 * 0.02;
+    if (uv.y > pos && uv.y < pos + delta && pos+delta < 1.0)
+    {
+        uv.y += delta;
+    }
+    return uv;
+}
+vec2 vertical_line(vec2 uv) {
+    delta = rnd2 * 0.02;
+    if (uv.x > pos && uv.x < pos + delta && pos + delta < 1.0)
+    {
+        uv.x += delta;
     }
     return uv;
 }
@@ -49,13 +73,20 @@ vec2 vertical_shift(vec2 uv) {
 
 void main() {
     vec2 uv = interpolated_uv;
-    if (rnd2 < horizontal_prob) //russian roulette
+    if (rnd2 < horizontal_shift_prob) //russian roulette
     {
         //simple horizontally shift
         uv = horizontal_shift(uv);
     }
-    else {
+    else if (rnd2 < horizontal_shift_prob + vertical_shift_prob){
+        //simple horizontally shift
         uv = vertical_shift(uv);
+    }
+    else if (rnd2 < horizontal_shift_prob + vertical_shift_prob + horizontal_line_prob){
+        uv = horizontal_line(uv);
+    }
+    else {
+        uv = vertical_line(uv);
     }
     vec4 c = texture(texture_sampler, uv);
     output_color = c;

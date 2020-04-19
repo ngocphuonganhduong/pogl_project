@@ -44,10 +44,10 @@ namespace pogl {
         TEST_OPENGL_ERROR();
         for (auto p: programs)
         {
-//            int location = glGetUniformLocation(p->program_id(), "current_time");
-//            glUniform1f(location,  glutGet(GLUT_ELAPSED_TIME));
-//            TEST_OPENGL_ERROR();
-            int location = glGetUniformLocation(p->program_id(), "rnd");
+            int location = glGetUniformLocation(p->program_id(), "current_time");
+            glUniform1i(location,  glutGet(GLUT_ELAPSED_TIME));
+            TEST_OPENGL_ERROR();
+            location = glGetUniformLocation(p->program_id(), "rnd");
             glUniform1f(location,random1());
             TEST_OPENGL_ERROR();
             location = glGetUniformLocation(p->program_id(), "rnd2");

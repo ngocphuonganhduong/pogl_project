@@ -11,7 +11,7 @@ namespace pogl {
     float width = 720;
     float height = 480;
     bool saved = false;
-    float fpms = 30; //frame per mili second
+    float fpms = 60; //frame per mili second
 
     std::vector<shared_obj> objects;
     std::vector<shared_prog> programs;
