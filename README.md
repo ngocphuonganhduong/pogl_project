@@ -1,5 +1,7 @@
 # pogl_project
+The project is heavily based on [POGL course and TPs](http://jo.fabrizio.free.fr/teaching/synt/index.php) at EPITA.
 
+###Used library / dependencies
 stb image loading [here](https://github.com/nothings/stb)
 
 ###Reference 

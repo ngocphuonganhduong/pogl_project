@@ -18,6 +18,7 @@ float pos = float(current_time % 100) / 100.0f; //divide image in 100 segments (
 
 layout(location=0) out vec4 output_color;
 
+in vec4 interpolated_color;
 in vec2 interpolated_uv;
 
 float displacement_func(float n)
@@ -89,5 +90,5 @@ void main() {
         uv = vertical_line(uv);
     }
     vec4 c = texture(texture_sampler, uv);
-    output_color = c;
+    output_color = c * interpolated_color;
 }
