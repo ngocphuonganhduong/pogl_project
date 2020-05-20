@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     if (argc < 2)
     {
         cout << "usage:\n  ./pogl shader_name" << endl;
-        cout << "shaders:\n - tp3_test\n - test\n - sepia\n - night_vision" << endl;
+        cout << "shaders:\n - tp3_test\n - test\n - sepia\n - night_vision\n - glitch\n - depth_map" << endl;
         return 1;
     }
 
@@ -74,12 +74,13 @@ int main(int argc, char *argv[]) {
     prog->add_texture(texture1);
     shared_text brick = Texture::create("../textures/wood.jpg");
     prog->add_texture(brick);
-
+    shared_text red = Texture::create("../textures/redbrick.jpg");
+    prog->add_texture(red);
 
     matrix4 transformation = matrix4::identity();
     transformation.scaled(0.5, 0.5, 0.5);
-    transformation.rotated(30, 30,0);
-    transformation.translated(-2, 0, -10);
+    transformation.rotated(30, 50,0);
+    transformation.translated(-3, -5, -10);
 
 
     shared_obj obj1 = prog->add_vbo(teapot_vbd, "position", 3, transformation);
@@ -89,13 +90,11 @@ int main(int argc, char *argv[]) {
     prog->add_data(color_buffer_data, "color", 3);
     prog->add_data(uv_buffer_data, "uv", 2); //2D
 
-
-
     //second object
     matrix4 transformation2 = matrix4::identity();
     transformation2.scaled(0.5, 0.5, 0.5);
     transformation2.rotated(-30, 180,20);
-    transformation2.translated(2, 0, -10);
+    transformation2.translated(2, -5, -20);
 
     shared_obj obj2 = prog->add_vbo(teapot_vbd, "position", 3, transformation2);
     obj2->add_texture(texture1);
@@ -105,23 +104,77 @@ int main(int argc, char *argv[]) {
     prog->add_data(uv_buffer_data, "uv", 2); //2D
 
     //third object
-
     matrix4 transformation3 = matrix4::identity();
-    transformation3.scaled(5, 5, 5);
-    transformation3.translated(0, 0, -15);
-
+    transformation3.scaled(15, 15, 15);
+    transformation3.translated(0, 0, -50);
 
     shared_obj obj3 = prog->add_vbo(rectangle_vbd, "position", 3, transformation3);
     obj3->add_texture(brick);
     prog->add_data(rectangle_normal, "normal", 3);
     prog->add_data(rectangle_uv, "uv", 2); //2D
 
+    //left
+
+    matrix4 transformation4 = matrix4::identity();
+    transformation4.scaled(10, 10, 10);
+    transformation4.translated(20, 0, -10);
+    transformation4.rotated(0, 85, 0);
+
+    shared_obj obj4 = prog->add_vbo(rectangle_vbd, "position", 3, transformation4);
+    obj4->add_texture(brick);
+    prog->add_data(rectangle_normal, "normal", 3);
+    prog->add_data(rectangle_uv, "uv", 2); //2D
+
+    //right
+    matrix4 transformation5 = matrix4::identity();
+    transformation5.scaled(10, 10, 10);
+    transformation5.translated(-20, 0, -10);
+    transformation5.rotated(0, -85, 0);
+
+    shared_obj obj5 = prog->add_vbo(rectangle_vbd, "position", 3, transformation5);
+    obj5->add_texture(brick);
+    prog->add_data(rectangle_normal, "normal", 3);
+    prog->add_data(rectangle_uv, "uv", 2); //2D
+
+    //ground
+    matrix4 transformation6 = matrix4::identity();
+    transformation6.scaled(10, 10, 10);
+    transformation6.translated(0, 20, -10);
+    transformation6.rotated(-80, 0, 0);
+
+    shared_obj obj6 = prog->add_vbo(rectangle_vbd, "position", 3, transformation6);
+    obj6->add_texture(brick);
+    prog->add_data(rectangle_normal, "normal", 3);
+    prog->add_data(rectangle_uv, "uv", 2); //2D
+
+    //top
+    matrix4 transformation7 = matrix4::identity();
+    transformation7.scaled(10, 10, 10);
+    transformation7.translated(0, -20, -10);
+    transformation7.rotated(80, 0, 0);
+
+    shared_obj obj7 = prog->add_vbo(rectangle_vbd, "position", 3, transformation7);
+    obj7->add_texture(brick);
+    prog->add_data(rectangle_normal, "normal", 3);
+    prog->add_data(rectangle_uv, "uv", 2); //2D
+
+    //fourth object
+    matrix4 transformation8 = matrix4::identity();
+    transformation8.scaled(0.5, 0.5, 0.5);
+    transformation8.rotated(0, 180,0);
+    transformation8.translated(-5, -5, -25);
+
+    shared_obj obj8 = prog->add_vbo(teapot_vbd, "position", 3, transformation8);
+    obj8->add_texture(texture1);
+
+    prog->add_data(normal_smooth_buffer_data, "normal", 3);
+    prog->add_data(color_buffer_data, "color", 3);
+    prog->add_data(uv_buffer_data, "uv", 2); //2D
+
     //texture
 //    prog->add_texture("../textures/redbrick.tga", "texture_sampler", GL_TEXTURE0);
 //    prog->add_texture("../textures/lighting.tga", "lighting_sampler", GL_TEXTURE1);
 //    prog->add_texture("../textures/normalmap.tga", "normalmap_sampler", GL_TEXTURE2);
-
-
 
 
     glutMainLoop();
