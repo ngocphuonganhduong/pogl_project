@@ -12,11 +12,11 @@ uniform vec2 windowsize;
 
 bool in_binoculars(vec2 pos, float radius)
 {
-    float tempx = (pos.x - windowsize.x/2 - radius) / 2;
-    float tempy = (pos.y - windowsize.y/2) / 2;
+    float tempx = (pos.x - windowsize.x/2 - 1.5*radius) / 2;
+    float tempy = (pos.y - windowsize.y/2 + 0.5*radius) / 2;
     float left_circle = tempx*tempx + tempy*tempy - radius*radius;
 
-    tempx = (pos.x - windowsize.x/2 + radius) / 2;
+    tempx = (pos.x - windowsize.x/2 + 1.5*radius) / 2;
     float right_circle = tempx*tempx + tempy*tempy - radius*radius;
 
     return left_circle <=0 || right_circle <= 0;
@@ -25,7 +25,7 @@ bool in_binoculars(vec2 pos, float radius)
 void main() {
     vec4 c = texture2D(texture_sampler, interpolated_uv_position);
 
-    if(in_binoculars(gl_FragCoord.xy, 100))
+    if(in_binoculars(gl_FragCoord.xy, 145))
     {
         // greyscale
         vec4 greyfac = vec4(0.21, 0.72, 0.07, 0);
