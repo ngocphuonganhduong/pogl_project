@@ -21,7 +21,7 @@ namespace pogl {
         Object(const GLuint &program_id, const GLuint &vbo_id, const std::vector<GLfloat> &vb_data,
                const matrix4 &transformation);
 
-        void add_texture(shared_text texture);
+        void add_texture(shared_text texture, std::string name);
         void draw();
 
         matrix4 transformation;
@@ -30,7 +30,7 @@ namespace pogl {
         GLuint program_id;
         GLuint vbo_id;
         std::vector<GLfloat> vb_data;
-        shared_text texture;
+        std::unordered_map<std::string, shared_text> textures;
     };
     using shared_obj = std::shared_ptr<Object>;
 

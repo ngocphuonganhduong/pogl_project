@@ -35,27 +35,25 @@ namespace pogl {
         TEST_OPENGL_ERROR();
     }
 
-    void timer_func(int v)
-    {
+    void timer_func(int v) {
         glutPostRedisplay();
     }
+
     void display() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         TEST_OPENGL_ERROR();
-        for (auto p: programs)
-        {
-            int location = glGetUniformLocation(p->program_id(), "current_time");
-            glUniform1i(location,  glutGet(GLUT_ELAPSED_TIME));
-            TEST_OPENGL_ERROR();
-            location = glGetUniformLocation(p->program_id(), "rnd");
-            glUniform1f(location,random1());
-            TEST_OPENGL_ERROR();
-            location = glGetUniformLocation(p->program_id(), "rnd2");
-            glUniform1f(location, drand48());
-            TEST_OPENGL_ERROR();
-        }
+        shared_prog p = programs[display_program_index];
+        int location = glGetUniformLocation(p->program_id(), "current_time");
+        glUniform1i(location, glutGet(GLUT_ELAPSED_TIME));
+        TEST_OPENGL_ERROR();
+        location = glGetUniformLocation(p->program_id(), "rnd");
+        glUniform1f(location, random1());
+        TEST_OPENGL_ERROR();
+        location = glGetUniformLocation(p->program_id(), "rnd2");
+        glUniform1f(location, drand48());
+        TEST_OPENGL_ERROR();
 
-        for (auto o: objects) {
+        for (auto o: p->objects) {
             o->draw();
         }
         glBindVertexArray(0);

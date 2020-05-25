@@ -34,7 +34,7 @@ namespace pogl {
     extern float height;
     extern bool saved;
     extern float fpms; //frame per mili second
-    extern std::vector<shared_obj> objects;
+    extern unsigned int display_program_index;
 
     class Program {
     public:
@@ -64,25 +64,32 @@ namespace pogl {
 
         void add_texture(shared_text texture);
 
+        bool create_frame_buffer(const char *name);
+
         void init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
                                            const char *pro_name, const char *view_name);
 
 
         bool is_ready();
 
+        void use();
+
         GLuint program_id() const;
+
+        std::vector<shared_obj> objects;
 
     private:
         GLuint pg_id; //program id
         GLuint vs_id; //vertex shader id
         GLuint fs_id; //fragment shader id
         bool isReady = false;
+        unsigned int index = 0;
     };
 
     using shared_prog = std::shared_ptr<Program>;
     extern std::vector<shared_prog> programs;
 
-
+    void use_program(unsigned int index);
 }
 
 

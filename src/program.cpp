@@ -12,8 +12,7 @@ namespace pogl {
     float height = 480;
     bool saved = false;
     float fpms = 60; //frame per mili second
-
-    std::vector<shared_obj> objects;
+    unsigned int display_program_index = 0;
     std::vector<shared_prog> programs;
 
     Program::Program() {}
@@ -68,7 +67,7 @@ namespace pogl {
         TEST_OPENGL_ERROR();
 
         shared_obj obj = std::make_shared<Object>(pg_id, vbo_id, vb_data, transformation, uniform_color);
-        objects.push_back(obj);
+        this->objects.push_back(obj);
 
         glBindVertexArray(vbo_id);
         TEST_OPENGL_ERROR();
@@ -148,6 +147,7 @@ namespace pogl {
             }
         }
         p->isReady = link_status == GL_TRUE;
+        p->index = programs.size();
         programs.push_back(p);
         return p;
     }
@@ -171,7 +171,6 @@ namespace pogl {
 
         int uniform_windowSize = glGetUniformLocation(pg_id, "windowsize");
 
-        glUseProgram(pg_id);
         TEST_OPENGL_ERROR();
 
         GLuint pro_mat_id = glGetUniformLocation(pg_id, pro_name);
@@ -209,12 +208,16 @@ namespace pogl {
         TEST_OPENGL_ERROR();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         TEST_OPENGL_ERROR();
-
-
     }
+
 
     GLuint Program::program_id() const {
         return this->pg_id;
+    }
+
+    void Program::use() {
+        display_program_index = index;
+        glUseProgram(this->pg_id);
     }
 
 
