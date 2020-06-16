@@ -1,8 +1,12 @@
 #version 420
 
-out vec3 color;
+out vec4 color;
 uniform vec3 uniform_color;
 
+
+in vec2 interpolated_uv_position;
+in vec4 interpolated_color;
+
 void main() {
-    color = uniform_color;
+    color = interpolated_color;
 }
