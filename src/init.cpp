@@ -1,11 +1,8 @@
-//
-// Created by rimuru on 11/04/2020.
-//
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "init.hh"
-#include "utils/image_io.hh"
 #include "utils/misc.hh"
+#include "opengl_handling_error.hh"
 
 namespace pogl {
 
@@ -53,20 +50,19 @@ namespace pogl {
         glUniform1f(location, drand48());
         TEST_OPENGL_ERROR();
 
-        for (auto o: p->objects) {
-            o->draw();
-        }
+        p->draw();
+
         glBindVertexArray(0);
-        if (saved) {
-            tifo::rgb24_image *texture = new tifo::rgb24_image(800, 590);
-            glReadPixels(150, 250, 800, 590, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
-            TEST_OPENGL_ERROR();
-            //glReadPixels(0, 0, 1024, 1024, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
-            tifo::save_image(*texture, "render.tga");
-            std::cout << "Save " << std::endl;
-            delete texture;
+//        if (saved) {
+//            tifo::rgb24_image *texture = new tifo::rgb24_image(800, 590);
+//            glReadPixels(150, 250, 800, 590, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
+//            TEST_OPENGL_ERROR();
+//            //glReadPixels(0, 0, 1024, 1024, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
+//            tifo::save_image(*texture, "render.tga");
+//            std::cout << "Save " << std::endl;
+//            delete texture;
             //saved = true;
-        }
+//        }
         glutSwapBuffers();
         glutTimerFunc(fpms, timer_func, 0);
     }

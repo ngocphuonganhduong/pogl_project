@@ -1,12 +1,8 @@
-//
-// Created by rimuru on 14/04/2020.
-//
-
 #ifndef TEXTURE_HH
 #define TEXTURE_HH
-
 #include <cstdint>
 #include <memory>
+#include <GL/glew.h>
 
 namespace pogl {
     class Texture {
@@ -23,6 +19,7 @@ namespace pogl {
         uint8_t *img_data = NULL;
         int unit;//opengl texture unit
     private:
+        GLuint texture_id;
         static int max_unit;
     };
 

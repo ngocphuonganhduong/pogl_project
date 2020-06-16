@@ -1,10 +1,6 @@
-//
-// Created by rimuru on 14/04/2020.
-//
-
 #include <iostream>
 #include "texture.hh"
-
+#include "opengl_handling_error.hh"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -19,6 +15,23 @@ namespace pogl
         img_data = stbi_load(filename, &sx, &sy, &img_bpp, 3);
         std::cout << filename << ": " << sx << " ," << sy <<  "\n";
 
+        GLuint texture_id;
+        glGenTextures(1, &texture_id);
+        TEST_OPENGL_ERROR();
+        glActiveTexture(GL_TEXTURE0 + unit);
+        TEST_OPENGL_ERROR();
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        TEST_OPENGL_ERROR();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sx, sy, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data);
+        TEST_OPENGL_ERROR();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        TEST_OPENGL_ERROR();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        TEST_OPENGL_ERROR();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        TEST_OPENGL_ERROR();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        TEST_OPENGL_ERROR();
     }
 
     Texture::~Texture() {
