@@ -63,11 +63,17 @@ int main(int argc, char *argv[]) {
     shared_text texture1 = Texture::create("../textures/texture.tga");
     shared_text brick = Texture::create("../textures/wood.jpg");
     shared_text red = Texture::create("../textures/redbrick.jpg");
+    shared_text white = Texture::create("../textures/white.png");
 
     /** init OpenGLObject - vao, vbo **/
     OpenGLObject teapot(teapot_vbd, normal_smooth_buffer_data, uv_buffer_data);
     OpenGLObject rectangle(rectangle_vbd, rectangle_normal, rectangle_uv);
-
+    Obj bunny_obj = Obj();
+    bunny_obj.load_file("../src/vbo/bunny.obj");
+    OpenGLObject bunny(bunny_obj.get_vbd(), bunny_obj.get_normals(), bunny_obj.get_uv());
+//    Obj cube_obj = Obj();
+//    cube_obj.load_file("../src/vbo/cube.obj");
+//    OpenGLObject cube(cube_obj.get_vbd(), cube_obj.get_normals(), cube_obj.get_uv());
 
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
@@ -87,68 +93,71 @@ int main(int argc, char *argv[]) {
     prog->init_projection_view_matrices(eye, center, up, "projection", "view");
 
     /** init PROGRAM OBJECTS - add opengl objects to program**/
-    //teapot 1
-    matrix4 transformation = matrix4::identity();
-    transformation.scaled(0.5, 0.5, 0.5);
-    transformation.rotated(30, 50, 0);
-    transformation.translated(-3, -5, -10);
-    auto obj1 = prog->add_object(teapot, transformation);
-    obj1->add_texture(texture1, "texture_sampler");
-
-    //teapot 2
-    matrix4 transformation2 = matrix4::identity();
-    transformation2.scaled(0.5, 0.5, 0.5);
-    transformation2.rotated(-30, 180, 20);
-    transformation2.translated(2, -5, -20);
-    auto obj2 = prog->add_object(teapot, transformation2);
-    obj2->add_texture(texture1, "texture_sampler");
 
     //front wall
+    matrix4 transformation1 = matrix4::identity();
+    transformation1.scaled(15, 15, 15);
+    transformation1.translated(0, 0, -50);
+    auto obj1 = prog->add_object(rectangle, transformation1);
+    obj1->add_texture(brick, "texture_sampler");
+
+    //left wall
+    matrix4 transformation2 = matrix4::identity();
+    transformation2.scaled(10, 10, 10);
+    transformation2.translated(20, 0, -10);
+    transformation2.rotated(0, 85, 0);
+    auto obj2 = prog->add_object(rectangle, transformation2);
+    obj2->add_texture(brick, "texture_sampler");
+
+    //right wall
     matrix4 transformation3 = matrix4::identity();
-    transformation3.scaled(15, 15, 15);
-    transformation3.translated(0, 0, -50);
+    transformation3.scaled(10, 10, 10);
+    transformation3.translated(-20, 0, -10);
+    transformation3.rotated(0, -85, 0);
     auto obj3 = prog->add_object(rectangle, transformation3);
     obj3->add_texture(brick, "texture_sampler");
 
-    //left wall
+    //ground
     matrix4 transformation4 = matrix4::identity();
     transformation4.scaled(10, 10, 10);
-    transformation4.translated(20, 0, -10);
-    transformation4.rotated(0, 85, 0);
+    transformation4.translated(0, 20, -10);
+    transformation4.rotated(-80, 0, 0);
     auto obj4 = prog->add_object(rectangle, transformation4);
     obj4->add_texture(brick, "texture_sampler");
 
-    //right wall
+    //top
     matrix4 transformation5 = matrix4::identity();
     transformation5.scaled(10, 10, 10);
-    transformation5.translated(-20, 0, -10);
-    transformation5.rotated(0, -85, 0);
+    transformation5.translated(0, -20, -10);
+    transformation5.rotated(80, 0, 0);
     auto obj5 = prog->add_object(rectangle, transformation5);
     obj5->add_texture(brick, "texture_sampler");
 
-    //ground
+    //teapot
     matrix4 transformation6 = matrix4::identity();
-    transformation6.scaled(10, 10, 10);
-    transformation6.translated(0, 20, -10);
-    transformation6.rotated(-80, 0, 0);
-    auto obj6 = prog->add_object(rectangle, transformation6);
-    obj6->add_texture(brick, "texture_sampler");
+    transformation6.scaled(0.25, 0.25, 0.25);
+    transformation6.rotated(0, 180, 0);
+    transformation6.translated(1, -2, -8);;
+    auto obj6 = prog->add_object(teapot, transformation6);
+    obj6->add_texture(texture1, "texture_sampler");
 
-    //roof
+    //bunny
     matrix4 transformation7 = matrix4::identity();
     transformation7.scaled(10, 10, 10);
-    transformation7.translated(0, -20, -10);
-    transformation7.rotated(80, 0, 0);
-    auto obj7 = prog->add_object(rectangle, transformation7);
-    obj7->add_texture(brick, "texture_sampler");
+    transformation7.rotated(0, 45, 0);
+    transformation7.translated(-3, -3, -10);
 
-    //teapot 3
-    matrix4 transformation8 = matrix4::identity();
-    transformation8.scaled(0.5, 0.5, 0.5);
-    transformation8.rotated(0, 180, 0);
-    transformation8.translated(-5, -5, -25);
-    auto obj8 = prog->add_object(teapot, transformation8);
-    obj8->add_texture(texture1, "texture_sampler");
+    auto obj7 = prog->add_object(bunny, transformation7);
+    obj7->add_texture(white, "texture_sampler");
+
+
+    //box
+//    matrix4 transformation8 = matrix4::identity();
+//    transformation8.scaled(1, 1, 1);
+//    transformation8.rotated(0, 0, 0);
+//    transformation8.translated(1, -3, -8);
+//    auto obj9 = prog->add_object(cube, transformation8);
+//    obj9->add_texture(white, "texture_sampler");
 
     if (shader_name == "anaglyph") {
         //CREATE a framebuffer to render current scene to a texture
