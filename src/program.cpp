@@ -1,11 +1,7 @@
-//
-// Created by rimuru on 19/03/2020.
-//
-
 #include <GL/glew.h>
-
 #include "program.hh"
 #include "vbo/teapot.hh"
+#include "opengl_handling_error.hh"
 
 namespace pogl {
     float width = 720;
@@ -28,52 +24,6 @@ namespace pogl {
         glDeleteShader(vs_id);
         glDeleteShader(fs_id);
         glDeleteProgram(pg_id);
-    }
-
-    void Program::add_data(const std::vector<GLfloat> &buffer_data, const char *var_name, GLint nb_components) {
-
-        GLint location = glGetAttribLocation(pg_id, var_name);
-        TEST_OPENGL_ERROR();
-        GLuint buffer_id;
-
-        if (location != -1) {
-            glGenBuffers(1, &buffer_id);
-            glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
-            TEST_OPENGL_ERROR();
-            glBufferData(GL_ARRAY_BUFFER, buffer_data.size() * sizeof(float), buffer_data.data(), GL_STATIC_DRAW);
-            TEST_OPENGL_ERROR();
-            glVertexAttribPointer(location, nb_components, GL_FLOAT, GL_FALSE, 0, 0);
-            TEST_OPENGL_ERROR();
-            glEnableVertexAttribArray(location);
-            TEST_OPENGL_ERROR();
-        }
-
-    }
-
-    shared_obj Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
-                                const matrix4 &transformation) {
-
-        return add_vbo(vb_data, var_name, nb_components, transformation, Vector3(1));
-    }
-
-    shared_obj Program::add_vbo(const std::vector<GLfloat> &vb_data, const char *var_name, GLint nb_components,
-                                const matrix4 &transformation, const Vector3 &uniform_color) {
-        GLuint vbo_id;
-
-        glGenVertexArrays(1, &vbo_id);
-        TEST_OPENGL_ERROR();
-
-        glBindVertexArray(vbo_id);
-        TEST_OPENGL_ERROR();
-
-        shared_obj obj = std::make_shared<Object>(pg_id, vbo_id, vb_data, transformation, uniform_color);
-        this->objects.push_back(obj);
-
-        glBindVertexArray(vbo_id);
-        TEST_OPENGL_ERROR();
-
-        add_data(vb_data, var_name, nb_components);
-        return obj;
     }
 
     GLuint Program::compile_shader(GLenum type, const std::string &source) {
@@ -186,30 +136,6 @@ namespace pogl {
         TEST_OPENGL_ERROR();
     }
 
-    void Program::add_texture(shared_text texture) {
-        GLuint texture_id;
-        //      GLint location;
-
-        glGenTextures(1, &texture_id);
-        TEST_OPENGL_ERROR();
-        glActiveTexture(GL_TEXTURE0 + texture->unit);
-        TEST_OPENGL_ERROR();
-        glBindTexture(GL_TEXTURE_2D, texture_id);
-        TEST_OPENGL_ERROR();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->sx, texture->sy, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                     texture->img_data);
-        TEST_OPENGL_ERROR();
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        TEST_OPENGL_ERROR();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        TEST_OPENGL_ERROR();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        TEST_OPENGL_ERROR();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        TEST_OPENGL_ERROR();
-    }
-
 
     GLuint Program::program_id() const {
         return this->pg_id;
@@ -220,5 +146,25 @@ namespace pogl {
         glUseProgram(this->pg_id);
     }
 
+    shared_prog_obj Program::add_object(const OpenGLObject &obj,
+                                        const matrix4 &transformation) {
+        glBindAttribLocation(pg_id, 0, "position");
+        TEST_OPENGL_ERROR();
+        glBindAttribLocation(pg_id, 1, "normal");
+        TEST_OPENGL_ERROR();
+        glBindAttribLocation(pg_id, 2, "uv");
+        TEST_OPENGL_ERROR();
+
+        shared_prog_obj p_obj = std::make_shared<ProgramObject>(pg_id, obj);
+        p_obj->set_transformation(transformation);
+        objects.push_back(p_obj);
+        return p_obj;
+    }
+
+    void Program::draw() {
+        for (auto o: objects) {
+            o->draw(this->pg_id);
+        }
+    }
 
 }

@@ -1,6 +1,3 @@
-//
-// Created by rimuru on 11/04/2020.
-//
 #include "program.hh"
 
 #ifndef INIT_HH

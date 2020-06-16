@@ -1,7 +1,3 @@
-//
-// Created by rimuru on 24/05/2020.
-//
-
 #ifndef FRAME_BUFFER_HH
 #define FRAME_BUFFER_HH
 
@@ -16,7 +12,5 @@ namespace pogl {
         GLuint fbo_id;
     };
 }
-
-
 
 #endif //FRAME_BUFFER_HH

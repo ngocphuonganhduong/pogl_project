@@ -1,7 +1,3 @@
-//
-// Created by rimuru on 19/03/2020.
-//
-
 #ifndef program_HH
 #define program_HH
 
@@ -10,24 +6,8 @@
 #include <memory>
 #include <vector>
 #include <tuple>
-#include "object.hh"
-
-#define TEST_OPENGL_ERROR2(name)                 \
-  do {                                          \
-    GLenum err = glGetError();                  \
-    if (err != GL_NO_ERROR)                     \
-        std::cerr << "OpenGL ERROR "            \
-        << err << ": " << gluErrorString(err)   \
-        << " at position: "                     \
-        << name << std::endl;                   \
-  } while(0)
-
-#define TEST_OPENGL_ERROR()                                                             \
-  do {                                    \
-    GLenum err = glGetError();                                            \
-    if (err != GL_NO_ERROR) std::cerr << "OpenGL ERROR " << __LINE__<< ": " << gluErrorString(err) << std::endl;      \
-  } while(0)
-
+#include "opengl_object.hh"
+#include "program_object.hh"
 
 namespace pogl {
     extern float width;
@@ -51,20 +31,7 @@ namespace pogl {
 
         static GLuint compile_shader(GLenum type, const std::string &src);
 
-
-        shared_obj add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
-                           const char *var_name, GLint nb_components, const matrix4 &transformation);
-
-        shared_obj add_vbo(const std::vector<GLfloat> &vertex_buffer_data,
-                           const char *var_name, GLint nb_components, const matrix4 &transformation,
-                           const Vector3 &uniform_color);
-
-        void add_data(const std::vector<GLfloat> &vertex_buffer_data,
-                      const char *var_name, GLint nb_components);
-
-        void add_texture(shared_text texture);
-
-        bool create_frame_buffer(const char *name);
+        shared_prog_obj add_object(const OpenGLObject &obj, const matrix4 &transformation);
 
         void init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
                                            const char *pro_name, const char *view_name);
@@ -74,9 +41,11 @@ namespace pogl {
 
         void use();
 
+        void draw();
+
         GLuint program_id() const;
 
-        std::vector<shared_obj> objects;
+        std::vector<shared_prog_obj> objects;
 
     private:
         GLuint pg_id; //program id
