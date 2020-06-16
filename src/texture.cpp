@@ -22,10 +22,16 @@ namespace pogl
     }
 
     Texture::~Texture() {
-        stbi_image_free(img_data);
+        if (img_data)
+            stbi_image_free(img_data);
     }
 
     shared_text Texture::create(const char *filename) {
         return std::make_shared<Texture>(filename);
+    }
+
+    Texture::Texture() {
+        unit = max_unit;
+        max_unit += 2;
     }
 }

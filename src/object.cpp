@@ -22,10 +22,12 @@ namespace pogl {
         glUniform3fv(location, 1, &uniform_color.val[0]);
         TEST_OPENGL_ERROR();
 
-        location = glGetUniformLocation(program_id, "texture_sampler");
-        TEST_OPENGL_ERROR();
-        glUniform1i(location, texture->unit);
-        TEST_OPENGL_ERROR();
+        for (auto text: textures){
+            location = glGetUniformLocation(program_id, text.first.c_str());
+            TEST_OPENGL_ERROR();
+            glUniform1i(location, text.second->unit);
+            TEST_OPENGL_ERROR();
+        }
 
         glDrawArrays(GL_TRIANGLES, 0, vb_data.size());
 
@@ -42,8 +44,8 @@ namespace pogl {
                                                      vb_data(vb_data_),
                                                      transformation(transformation_) {}
 
-    void Object::add_texture(shared_text text) {
-        texture = text;
+    void Object::add_texture(shared_text text, std::string name) {
+        textures.emplace(name, text);
     }
 
 }

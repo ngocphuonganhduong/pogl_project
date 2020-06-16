@@ -16,10 +16,11 @@ namespace pogl {
         static std::shared_ptr<Texture> create(const char *filename);
 
         Texture(const char *filename);
+        Texture();
 
         int sx;
         int sy;
-        uint8_t *img_data;
+        uint8_t *img_data = NULL;
         int unit;//opengl texture unit
     private:
         static int max_unit;

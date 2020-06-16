@@ -1,0 +1,15 @@
+#version 420
+
+uniform sampler2D texture_left;
+uniform sampler2D texture_right;
+layout(location=0) out vec4 output_color;
+
+in vec2 interpolated_uv;
+in vec4 interpolated_color;
+
+void main() {
+    vec4 left = texture2D(texture_left, interpolated_uv);
+    vec4 right = texture2D(texture_right, interpolated_uv);
+    output_color = vec4(right.r, left.g, left.b, 1.0);
+
+}
