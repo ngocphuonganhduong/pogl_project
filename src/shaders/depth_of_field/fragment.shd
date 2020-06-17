@@ -4,7 +4,7 @@ uniform sampler2D depth_texture;
 layout(location=0) out vec4 output_color;
 
 in vec2 interpolated_uv;
-const int MaxHalfWin = 10;
+const int MaxHalfWin = 20;
 const float EPSILON = 0.01;
 
 void main() {

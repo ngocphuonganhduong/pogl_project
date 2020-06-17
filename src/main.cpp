@@ -60,9 +60,12 @@ int main(int argc, char *argv[]) {
 
     /** init TEXTURE **/
     shared_text texture1 = Texture::create("../textures/texture.tga");
+    shared_text wall_texture = Texture::create("../textures/cream_brick.jpg");
     shared_text brick = Texture::create("../textures/wood.jpg");
     shared_text plant_texture = Texture::create("../textures/plant.tga");
     shared_text white = Texture::create("../textures/white.png");
+    shared_text sofa_texture = Texture::create("../textures/blue_fabric.jpg");
+    shared_text door_texture = Texture::create("../textures/door.jpg");
 
     /** init OpenGLObject - vao, vbo **/
     OpenGLObject teapot(teapot_vbd, normal_smooth_buffer_data, uv_buffer_data);
@@ -92,6 +95,15 @@ int main(int argc, char *argv[]) {
     plant_obj.load_file("../src/vbo/plant.obj");
     OpenGLObject plant(plant_obj.get_vbd(), plant_obj.get_normals(), plant_obj.get_uv());
 
+    Obj sofa_obj = Obj();
+    sofa_obj.load_file("../src/vbo/sofa.obj");
+    OpenGLObject sofa(sofa_obj.get_vbd(), sofa_obj.get_normals(), sofa_obj.get_uv());
+
+
+    Obj door_obj = Obj();
+    door_obj.load_file("../src/vbo/door.obj");
+    OpenGLObject door(door_obj.get_vbd(), door_obj.get_normals(), door_obj.get_uv());
+
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
     std::string fragment_src = load("../src/shaders/" + main_scene + "/fragment.shd");
@@ -104,8 +116,8 @@ int main(int argc, char *argv[]) {
         std::cout << "NOT READY\n";
         return 1;
     }
-    Vector3 eye(0, 0, 17);
-    Vector3 center(0, 0, 0);
+    Vector3 eye(0.5, 0, 20);
+    Vector3 center(-0.5, -1, 0);
     Vector3 up(0, 1, 0);
     prog->init_projection_view_matrices(eye, center, up);
 
@@ -116,15 +128,15 @@ int main(int argc, char *argv[]) {
     transformation1.scaled(15, 15, 15);
     transformation1.translated(0, 0, -50);
     auto obj1 = prog->add_object(rectangle, transformation1);
-    obj1->add_texture(brick, "texture_sampler");
+    obj1->add_texture(wall_texture, "texture_sampler");
 
     //left wall
     matrix4 transformation2 = matrix4::identity();
     transformation2.scaled(10, 10, 10);
-    transformation2.translated(20, 0, -10);
+    transformation2.translated(20, 0, -12);
     transformation2.rotated(0, 85, 0);
     auto obj2 = prog->add_object(rectangle, transformation2);
-    obj2->add_texture(brick, "texture_sampler");
+    obj2->add_texture(wall_texture, "texture_sampler");
 
     //right wall
     matrix4 transformation3 = matrix4::identity();
@@ -132,7 +144,7 @@ int main(int argc, char *argv[]) {
     transformation3.translated(-20, 0, -10);
     transformation3.rotated(0, -85, 0);
     auto obj3 = prog->add_object(rectangle, transformation3);
-    obj3->add_texture(brick, "texture_sampler");
+    obj3->add_texture(wall_texture, "texture_sampler");
 
     //ground
     matrix4 transformation4 = matrix4::identity();
@@ -148,13 +160,13 @@ int main(int argc, char *argv[]) {
     transformation5.translated(0, -20, -10);
     transformation5.rotated(80, 0, 0);
     auto obj5 = prog->add_object(rectangle, transformation5);
-    obj5->add_texture(brick, "texture_sampler");
+    obj5->add_texture(white, "texture_sampler");
 
     //bunny
     matrix4 transformation7 = matrix4::identity();
     transformation7.scaled(15, 15, 15);
     transformation7.rotated(0, 45, 0);
-    transformation7.translated(-4, -5, -20);
+    transformation7.translated(-6, -5, -25);
     auto obj7 = prog->add_object(bunny, transformation7);
     obj7->add_texture(white, "texture_sampler");
 
@@ -171,7 +183,7 @@ int main(int argc, char *argv[]) {
     matrix4 teapot_transformation = matrix4::identity();
     teapot_transformation.scaled(0.25, 0.25, 0.25);
     teapot_transformation.rotated(0, 180, 0);
-    teapot_transformation.translated(4.5, -4.125, -24);;
+    teapot_transformation.translated(3, -4.125, -4);;
     auto obj6 = prog->add_object(teapot, teapot_transformation);
     obj6->add_texture(texture1, "texture_sampler");
 
@@ -179,7 +191,7 @@ int main(int argc, char *argv[]) {
     matrix4 cup_transformation = matrix4::identity();
     cup_transformation.scaled(0.9, 0.9, 0.9);
     cup_transformation.rotated(0, 180, 0);
-    cup_transformation.translated(3.5, -4.125, -24);;
+    cup_transformation.translated(2, -4.125, -5);;
     auto obj11 = prog->add_object(cup, cup_transformation);
     obj11->add_texture(white, "texture_sampler");
 
@@ -187,21 +199,35 @@ int main(int argc, char *argv[]) {
     matrix4 table_transformation = matrix4::identity();
     table_transformation.scaled(0.04, 0.04, 0.04);
     table_transformation.rotated(0, 90, 90);
-    table_transformation.translated(4, -6, -25);
+    table_transformation.translated(3, -6, -5);
     auto obj9 = prog->add_object(table, table_transformation);
     obj9->add_texture(white, "texture_sampler");
 
     matrix4 transformation_chair = matrix4::identity();
     transformation_chair.scaled(1.2, 1.2, 1.2);
     transformation_chair.rotated(0, -20, 0);
-    transformation_chair.translated(10, -6, -20);
+    transformation_chair.translated(9, -6, -0);
     auto obj10 = prog->add_object(chair, transformation_chair);
 
     matrix4 transformation_plant = matrix4::identity();
     transformation_plant.scaled(1, 1, 1);
-    transformation_plant.translated(-1,-5,-30);
+    transformation_plant.translated(6,-5,-30);
     auto obj12 = prog->add_object(plant, transformation_plant);
     obj12->add_texture(plant_texture, "texture_sampler");
+
+    matrix4 transformation_sofa = matrix4::identity();
+    transformation_sofa.scaled(0.4, 0.4, 0.4);
+    transformation_sofa.rotated(-90, 0, 0);
+    transformation_sofa.translated(0,-4,-30);
+    auto obj13 = prog->add_object(sofa, transformation_sofa);
+    obj13->add_texture(sofa_texture, "texture_sampler");
+
+    matrix4 transformation_door = matrix4::identity();
+    transformation_door.scaled(0.03, 0.03, 0.03);
+    transformation_door.rotated(-90, 85, 0);
+    transformation_door.translated(-9.75,-6,-25);
+    auto obj14 = prog->add_object(door, transformation_door);
+    obj14->add_texture(door_texture, "texture_sampler");
 
 
     if (shader_name == "anaglyph") {
@@ -231,8 +257,8 @@ int main(int argc, char *argv[]) {
         prog2->init_projection_view_matrices(eye, center, up);
 
         matrix4 trans = matrix4::identity();
-        trans.scaled(12, 12, 12);
-        trans.translated(0, 0, -50);
+        trans.scaled(14, 14, 14);
+        trans.translated(-3.2, -3.6, -50);
         auto obj = prog2->add_object(rectangle, trans);
         obj->add_texture(left_texture, "texture_left");
         obj->add_texture(right_texture, "texture_right");
@@ -264,8 +290,8 @@ int main(int argc, char *argv[]) {
         prog3->use();
         prog3->init_projection_view_matrices(eye, center, up);
         matrix4 trans = matrix4::identity();
-        trans.scaled(12, 12, 12);
-        trans.translated(0, 0, -50);
+        trans.scaled(14, 14, 14);
+        trans.translated(-3.2, -3.6, -50);
         auto obj = prog3->add_object(rectangle, trans);
         obj->add_texture(scene_texture, "scene_texture");
         obj->add_texture(depth_texture, "depth_texture");

@@ -15,4 +15,7 @@ stb image loading [here](https://github.com/nothings/stb)
  * table: [here](https://free3d.com/3d-model/straight-leg-coffee-tablepine-v1--697100.html)
  * chair: [here](https://free3d.com/3d-model/chair-255345.html)
  * teacup: [here](https://free3d.com/3d-model/cup-933734.html)
+ * plant: [here](https://free3d.com/3d-model/house-plant-01-60848.html)
+ * door: [here](https://free3d.com/3d-model/-wooden-door-v3--266879.html)
+ * sofa: [here](https://free3d.com/3d-model/casual-sofa-denim-v1--415793.html)
  
