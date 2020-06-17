@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
     shared_text white = Texture::create("../textures/white.png");
     shared_text sofa_texture = Texture::create("../textures/blue_fabric.jpg");
     shared_text door_texture = Texture::create("../textures/door.jpg");
+    shared_text rug_texture = Texture::create("../textures/pink_rug.jpeg");
 
     /** init OpenGLObject - vao, vbo **/
     OpenGLObject teapot(teapot_vbd, normal_smooth_buffer_data, uv_buffer_data);
@@ -102,6 +103,10 @@ int main(int argc, char *argv[]) {
     Obj door_obj = Obj();
     door_obj.load_file("../src/vbo/door.obj");
     OpenGLObject door(door_obj.get_vbd(), door_obj.get_normals(), door_obj.get_uv());
+
+    Obj armchair_obj = Obj();
+    armchair_obj.load_file("../src/vbo/armchair.obj");
+    OpenGLObject armchair(armchair_obj.get_vbd(), armchair_obj.get_normals(), armchair_obj.get_uv());
 
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
@@ -210,14 +215,14 @@ int main(int argc, char *argv[]) {
 
     matrix4 transformation_plant = matrix4::identity();
     transformation_plant.scaled(1, 1, 1);
-    transformation_plant.translated(6,-5,-30);
+    transformation_plant.translated(4.5,-5,-30);
     auto obj12 = prog->add_object(plant, transformation_plant);
     obj12->add_texture(plant_texture, "texture_sampler");
 
     matrix4 transformation_sofa = matrix4::identity();
     transformation_sofa.scaled(0.4, 0.4, 0.4);
     transformation_sofa.rotated(-90, 0, 0);
-    transformation_sofa.translated(0,-4,-30);
+    transformation_sofa.translated(-1,-4,-30);
     auto obj13 = prog->add_object(sofa, transformation_sofa);
     obj13->add_texture(sofa_texture, "texture_sampler");
 
@@ -227,6 +232,14 @@ int main(int argc, char *argv[]) {
     transformation_door.translated(-9.75,-6,-25);
     auto obj14 = prog->add_object(door, transformation_door);
     obj14->add_texture(door_texture, "texture_sampler");
+
+
+    matrix4 transformation_armchair = matrix4::identity();
+    transformation_armchair.scaled(0.03, 0.03, 0.03);
+    transformation_armchair.rotated(0, -40, 0);
+    transformation_armchair.translated(6,-5,-24);
+    auto obj15 = prog->add_object(armchair, transformation_armchair);
+    obj15->add_texture(rug_texture, "texture_sampler");
 
 
     if (shader_name == "anaglyph") {
