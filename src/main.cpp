@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
     /** init TEXTURE **/
     shared_text texture1 = Texture::create("../textures/texture.tga");
     shared_text brick = Texture::create("../textures/wood.jpg");
+    shared_text plant_texture = Texture::create("../textures/plant.tga");
     shared_text white = Texture::create("../textures/white.png");
 
     /** init OpenGLObject - vao, vbo **/
@@ -86,6 +87,10 @@ int main(int argc, char *argv[]) {
     Obj cup_obj = Obj();
     cup_obj.load_file("../src/vbo/cup.obj");
     OpenGLObject cup(cup_obj.get_vbd(), cup_obj.get_normals(), cup_obj.get_uv());
+
+    Obj plant_obj = Obj();
+    plant_obj.load_file("../src/vbo/plant.obj");
+    OpenGLObject plant(plant_obj.get_vbd(), plant_obj.get_normals(), plant_obj.get_uv());
 
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
@@ -191,6 +196,12 @@ int main(int argc, char *argv[]) {
     transformation_chair.rotated(0, -20, 0);
     transformation_chair.translated(10, -6, -20);
     auto obj10 = prog->add_object(chair, transformation_chair);
+
+    matrix4 transformation_plant = matrix4::identity();
+    transformation_plant.scaled(1, 1, 1);
+    transformation_plant.translated(-1,-5,-30);
+    auto obj12 = prog->add_object(plant, transformation_plant);
+    obj12->add_texture(plant_texture, "texture_sampler");
 
 
     if (shader_name == "anaglyph") {
