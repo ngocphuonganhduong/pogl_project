@@ -54,15 +54,13 @@ int main(int argc, char *argv[]) {
     std::string shader_name(argv[1]);
     std::string main_scene(argv[1]);
     //path from build folder
-    if (shader_name == "anaglyph") {
+    if (shader_name == "anaglyph" || shader_name == "depth_of_field") {
         main_scene = "simple";
-    } else if (shader_name == "depth_of_field") {
-        main_scene = "depth_map";
     }
+
     /** init TEXTURE **/
     shared_text texture1 = Texture::create("../textures/texture.tga");
     shared_text brick = Texture::create("../textures/wood.jpg");
-    shared_text red = Texture::create("../textures/redbrick.jpg");
     shared_text white = Texture::create("../textures/white.png");
 
     /** init OpenGLObject - vao, vbo **/
@@ -71,9 +69,9 @@ int main(int argc, char *argv[]) {
     Obj bunny_obj = Obj();
     bunny_obj.load_file("../src/vbo/bunny.obj");
     OpenGLObject bunny(bunny_obj.get_vbd(), bunny_obj.get_normals(), bunny_obj.get_uv());
-//    Obj cube_obj = Obj();
-//    cube_obj.load_file("../src/vbo/cube.obj");
-//    OpenGLObject cube(cube_obj.get_vbd(), cube_obj.get_normals(), cube_obj.get_uv());
+    Obj cube_obj = Obj();
+    cube_obj.load_file("../src/vbo/cube.obj");
+    OpenGLObject cube(cube_obj.get_vbd(), cube_obj.get_normals(), cube_obj.get_uv());
 
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
@@ -90,7 +88,7 @@ int main(int argc, char *argv[]) {
     Vector3 eye(0, 0, 17);
     Vector3 center(0, 0, 0);
     Vector3 up(0, 1, 0);
-    prog->init_projection_view_matrices(eye, center, up, "projection", "view");
+    prog->init_projection_view_matrices(eye, center, up);
 
     /** init PROGRAM OBJECTS - add opengl objects to program**/
 
@@ -143,38 +141,36 @@ int main(int argc, char *argv[]) {
 
     //bunny
     matrix4 transformation7 = matrix4::identity();
-    transformation7.scaled(10, 10, 10);
+    transformation7.scaled(15, 15, 15);
     transformation7.rotated(0, 45, 0);
-    transformation7.translated(-3, -3, -10);
-
+    transformation7.translated(-4, -5, -20);
     auto obj7 = prog->add_object(bunny, transformation7);
     obj7->add_texture(white, "texture_sampler");
 
 
     //box
-//    matrix4 transformation8 = matrix4::identity();
-//    transformation8.scaled(1, 1, 1);
-//    transformation8.rotated(0, 0, 0);
-//    transformation8.translated(1, -3, -8);
-//    auto obj9 = prog->add_object(cube, transformation8);
-//    obj9->add_texture(white, "texture_sampler");
+    matrix4 transformation8 = matrix4::identity();
+    transformation8.scaled(1, 1, 1);
+    transformation8.rotated(0, 0, 0);
+    transformation8.translated(1, -3, -8);
+    auto obj8 = prog->add_object(cube, transformation8);
+    obj8->add_texture(white, "texture_sampler");
+
 
     if (shader_name == "anaglyph") {
         //CREATE a framebuffer to render current scene to a texture
         FrameBuffer fbo;
-        GLuint texture_left_id = fbo.bind_and_attach_to_texture(width, height);
+        auto left_texture = fbo.bind_and_attach_to_texture(width, height);
         display();
-        FrameBuffer fbo2;
-        GLuint texture_right_id = fbo.bind_and_attach_to_texture(width, height);
 
+        FrameBuffer fbo2;
+        auto right_texture = fbo.bind_and_attach_to_texture(width, height);
         matrix4 projection = matrix4::identity();
         float ratio = width / height;
         frustum(projection, -ratio + 0.04, ratio + 0.04, -1, 1, 5, 50000);
         GLuint pro_mat_id = glGetUniformLocation(prog->program_id(), "projection");
-        TEST_OPENGL_ERROR();
         glUniformMatrix4fv(pro_mat_id, 1, GL_FALSE, &projection.mat[0][0]);
         TEST_OPENGL_ERROR();
-
         display();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
@@ -185,30 +181,47 @@ int main(int argc, char *argv[]) {
         if (!prog2->is_ready())
             return 1;
         prog2->use();
-        prog2->init_projection_view_matrices(eye, center, up, "projection", "view");
+        prog2->init_projection_view_matrices(eye, center, up);
 
         matrix4 trans = matrix4::identity();
         trans.scaled(12, 12, 12);
         trans.translated(0, 0, -50);
         auto obj = prog2->add_object(rectangle, trans);
-
-        shared_text texture_left = std::make_shared<Texture>();
-        glActiveTexture(GL_TEXTURE0 + texture_left->unit);
-        glBindTexture(GL_TEXTURE_2D, texture_left_id);
-        obj->add_texture(texture_left, "texture_left");
-        shared_text texture_right = std::make_shared<Texture>();
-        glActiveTexture(GL_TEXTURE0 + texture_right->unit);
-        glBindTexture(GL_TEXTURE_2D, texture_right_id);
-        obj->add_texture(texture_right, "texture_right");
-    }
-    else if(shader_name == "depth_of_field")
-    {
-        FrameBuffer fbo_depth_map;
-        GLuint texture_depth_map_id = fbo_depth_map.bind_and_attach_to_texture(width, height);
+        obj->add_texture(left_texture, "texture_left");
+        obj->add_texture(right_texture, "texture_right");
+    } else if (shader_name == "depth_of_field") {
+        FrameBuffer fbo1;
+        auto scene_texture = fbo1.bind_and_attach_to_texture(width, height);
         display();
-        std::string vertex_src2 = load("../src/shaders/" + main_scene + "/vertex.shd");
-        std::string fragment_src2 = load("../src/shaders/" + main_scene + "/fragment.shd");
 
+//        //depth map
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+
+        std::string vertex_src2 = load("../src/shaders/depth_of_field/vertex.shd");
+        std::string fragment_src2 = load("../src/shaders/depth_of_field/ndc_depth_fragment.shd");
+        shared_prog depth_map_program = Program::make_program(vertex_src2, fragment_src2);
+        if (!depth_map_program->is_ready())
+            return 1;
+        depth_map_program->use();
+        depth_map_program->copy(prog);
+        FrameBuffer fbo2;
+        auto depth_texture = fbo2.bind_and_attach_to_texture(width, height);
+        display();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+        std::string vertex_src3 = load("../src/shaders/depth_of_field/vertex.shd");
+        std::string fragment_src3 = load("../src/shaders/depth_of_field/fragment.shd");
+        shared_prog prog3 = Program::make_program(vertex_src3, fragment_src3);
+        if (!prog3->is_ready())
+            return 1;
+        prog3->use();
+        prog3->init_projection_view_matrices(eye, center, up);
+        matrix4 trans = matrix4::identity();
+        trans.scaled(12, 12, 12);
+        trans.translated(0, 0, -50);
+        auto obj = prog3->add_object(rectangle, trans);
+        obj->add_texture(scene_texture, "scene_texture");
+        obj->add_texture(depth_texture, "depth_texture");
     }
 
     glutMainLoop();
