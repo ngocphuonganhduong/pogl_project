@@ -166,30 +166,30 @@ int main(int argc, char *argv[]) {
     matrix4 teapot_transformation = matrix4::identity();
     teapot_transformation.scaled(0.25, 0.25, 0.25);
     teapot_transformation.rotated(0, 180, 0);
-    teapot_transformation.translated(3, -2.75, -15);;
+    teapot_transformation.translated(4.5, -4.125, -24);;
     auto obj6 = prog->add_object(teapot, teapot_transformation);
     obj6->add_texture(texture1, "texture_sampler");
 
     //cup
     matrix4 cup_transformation = matrix4::identity();
     cup_transformation.scaled(0.9, 0.9, 0.9);
-//    cup_transformation.rotated(0, 180, 0);
-    cup_transformation.translated(1.75, -2.75, -14);;
+    cup_transformation.rotated(0, 180, 0);
+    cup_transformation.translated(3.5, -4.125, -24);;
     auto obj11 = prog->add_object(cup, cup_transformation);
     obj11->add_texture(white, "texture_sampler");
 
     //table
     matrix4 table_transformation = matrix4::identity();
-    table_transformation.scaled(0.05, 0.05, 0.05);
+    table_transformation.scaled(0.04, 0.04, 0.04);
     table_transformation.rotated(0, 90, 90);
-    table_transformation.translated(3, -5, -15);
+    table_transformation.translated(4, -6, -25);
     auto obj9 = prog->add_object(table, table_transformation);
     obj9->add_texture(white, "texture_sampler");
 
     matrix4 transformation_chair = matrix4::identity();
-    transformation_chair.scaled(1.4, 1.4, 1.4);
+    transformation_chair.scaled(1.2, 1.2, 1.2);
     transformation_chair.rotated(0, -20, 0);
-    transformation_chair.translated(9, -5, -10);
+    transformation_chair.translated(10, -6, -20);
     auto obj10 = prog->add_object(chair, transformation_chair);
 
 
