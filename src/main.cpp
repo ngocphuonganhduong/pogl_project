@@ -66,12 +66,26 @@ int main(int argc, char *argv[]) {
     /** init OpenGLObject - vao, vbo **/
     OpenGLObject teapot(teapot_vbd, normal_smooth_buffer_data, uv_buffer_data);
     OpenGLObject rectangle(rectangle_vbd, rectangle_normal, rectangle_uv);
+
     Obj bunny_obj = Obj();
     bunny_obj.load_file("../src/vbo/bunny.obj");
     OpenGLObject bunny(bunny_obj.get_vbd(), bunny_obj.get_normals(), bunny_obj.get_uv());
+
     Obj cube_obj = Obj();
     cube_obj.load_file("../src/vbo/cube.obj");
     OpenGLObject cube(cube_obj.get_vbd(), cube_obj.get_normals(), cube_obj.get_uv());
+
+    Obj table_obj = Obj();
+    table_obj.load_file("../src/vbo/table.obj");
+    OpenGLObject table(table_obj.get_vbd(), table_obj.get_normals(), table_obj.get_uv());
+
+    Obj chair_obj = Obj();
+    chair_obj.load_file("../src/vbo/chair.obj");
+    OpenGLObject chair(chair_obj.get_vbd(), chair_obj.get_normals(), chair_obj.get_uv());
+
+    Obj cup_obj = Obj();
+    cup_obj.load_file("../src/vbo/cup.obj");
+    OpenGLObject cup(cup_obj.get_vbd(), cup_obj.get_normals(), cup_obj.get_uv());
 
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
@@ -131,14 +145,6 @@ int main(int argc, char *argv[]) {
     auto obj5 = prog->add_object(rectangle, transformation5);
     obj5->add_texture(brick, "texture_sampler");
 
-    //teapot
-    matrix4 transformation6 = matrix4::identity();
-    transformation6.scaled(0.25, 0.25, 0.25);
-    transformation6.rotated(0, 180, 0);
-    transformation6.translated(1, -2, -8);;
-    auto obj6 = prog->add_object(teapot, transformation6);
-    obj6->add_texture(texture1, "texture_sampler");
-
     //bunny
     matrix4 transformation7 = matrix4::identity();
     transformation7.scaled(15, 15, 15);
@@ -150,11 +156,41 @@ int main(int argc, char *argv[]) {
 
     //box
     matrix4 transformation8 = matrix4::identity();
-    transformation8.scaled(1, 1, 1);
+    transformation8.scaled(0.5, 0.5, 0.5);
     transformation8.rotated(0, 0, 0);
-    transformation8.translated(1, -3, -8);
+    transformation8.translated(-5, -5, -20);
     auto obj8 = prog->add_object(cube, transformation8);
     obj8->add_texture(white, "texture_sampler");
+
+    //teapot
+    matrix4 teapot_transformation = matrix4::identity();
+    teapot_transformation.scaled(0.25, 0.25, 0.25);
+    teapot_transformation.rotated(0, 180, 0);
+    teapot_transformation.translated(3, -2.75, -15);;
+    auto obj6 = prog->add_object(teapot, teapot_transformation);
+    obj6->add_texture(texture1, "texture_sampler");
+
+    //cup
+    matrix4 cup_transformation = matrix4::identity();
+    cup_transformation.scaled(0.9, 0.9, 0.9);
+//    cup_transformation.rotated(0, 180, 0);
+    cup_transformation.translated(1.75, -2.75, -14);;
+    auto obj11 = prog->add_object(cup, cup_transformation);
+    obj11->add_texture(white, "texture_sampler");
+
+    //table
+    matrix4 table_transformation = matrix4::identity();
+    table_transformation.scaled(0.05, 0.05, 0.05);
+    table_transformation.rotated(0, 90, 90);
+    table_transformation.translated(3, -5, -15);
+    auto obj9 = prog->add_object(table, table_transformation);
+    obj9->add_texture(white, "texture_sampler");
+
+    matrix4 transformation_chair = matrix4::identity();
+    transformation_chair.scaled(1.4, 1.4, 1.4);
+    transformation_chair.rotated(0, -20, 0);
+    transformation_chair.translated(9, -5, -10);
+    auto obj10 = prog->add_object(chair, transformation_chair);
 
 
     if (shader_name == "anaglyph") {
