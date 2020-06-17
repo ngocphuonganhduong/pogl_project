@@ -1,16 +1,13 @@
 #version 420
-
-uniform sampler2D texture_sampler;
-uniform sampler2D lighting_sampler;
-uniform sampler2D normalmap_sampler;
 layout(location=0) out vec4 output_color;
-
-in vec2 interpolated_uv;
-in vec4 interpolated_color;
 const float near = 0.05;
 const float far = 5000;
 
 void main() {
+
+    /** THIS NDC DEPTH MAP SHADER IS FROM learnopengl.com **/
+    /** https://learnopengl.com/Advanced-OpenGL/Depth-testing **/
+
     float depth = gl_FragCoord.z * 2.0 - 1.0; // back to NDC
     depth = (2.0 * near * far) / (far + near - depth * (far - near));
     output_color = vec4(vec3(depth), 1.0);
