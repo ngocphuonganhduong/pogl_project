@@ -1,0 +1,19 @@
+#version 420
+
+uniform sampler2D texture_sampler;
+uniform float rnd; // [0.0-1.0] rnd is different each frame but it is the same for all pixels in a frame
+
+layout(location=0) out vec4 output_color;
+
+in vec4 interpolated_color;
+in vec2 interpolated_uv;
+
+void main() {
+    vec2 uv = interpolated_uv;
+    vec4 c = texture(texture_sampler, uv);
+
+    if (rnd < 0.5)
+        output_color = c * vec4(1,1,1, 1);
+    else
+        output_color = c * interpolated_color;
+}
