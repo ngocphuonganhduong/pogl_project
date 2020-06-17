@@ -4,6 +4,8 @@
 #include "opengl_object.hh"
 #include "utils/matrix4.hh"
 
+#include <unordered_map>
+
 namespace pogl {
     class ProgramObject {
     public:
