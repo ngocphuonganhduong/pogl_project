@@ -8,27 +8,10 @@
 #include "stb_image.h"
 #include "frame_buffer.hh"
 #include "obj_loader.hh"
-#include "opengl_handling_error.hh"
+#include "setup_shader.hh"
 
 using namespace pogl;
 using namespace std;
-
-std::string load(const std::string &filename) {
-    std::ifstream input_src_file(filename, std::ios::in);
-    std::string line;
-    std::string file_content = "";
-    if (input_src_file.fail()) {
-        std::cerr << "FAIL\n";
-        return "";
-    }
-    while (getline(input_src_file, line)) {
-        file_content = file_content + line + "\n";
-    }
-    file_content += '\0';
-    input_src_file.close();
-    return file_content;
-}
-
 
 int main(int argc, char *argv[]) {
     width = 1024;
@@ -53,7 +36,7 @@ int main(int argc, char *argv[]) {
     std::string shader_name(argv[1]);
     std::string main_scene(argv[1]);
     //path from build folder
-    if (shader_name == "anaglyph" || shader_name == "depth_of_field") {
+    if (shader_name == "anaglyph" || shader_name == "depth_of_field" || shader_name == "glitch") {
         main_scene = "simple";
     }
 
@@ -113,13 +96,10 @@ int main(int argc, char *argv[]) {
     std::string fragment_src = load("../src/shaders/" + main_scene + "/fragment.shd");
 
     shared_prog prog = Program::make_program(vertex_src, fragment_src);
-    prog->use();
-    if (prog->is_ready())
-        std::cout << "READY\n";
-    else {
-        std::cout << "NOT READY\n";
+    if (prog == NULL)
         return 1;
-    }
+    prog->use();
+
     Vector3 eye(0.5, 0, 20);
     Vector3 center(-0.5, -1, 0);
     Vector3 up(0, 1, 0);
@@ -215,21 +195,21 @@ int main(int argc, char *argv[]) {
 
     matrix4 transformation_plant = matrix4::identity();
     transformation_plant.scaled(1, 1, 1);
-    transformation_plant.translated(4.5,-5,-30);
+    transformation_plant.translated(4.5, -5, -30);
     auto obj12 = prog->add_object(plant, transformation_plant);
     obj12->add_texture(plant_texture, "texture_sampler");
 
     matrix4 transformation_sofa = matrix4::identity();
     transformation_sofa.scaled(0.4, 0.4, 0.4);
     transformation_sofa.rotated(-90, 0, 0);
-    transformation_sofa.translated(-1,-4,-30);
+    transformation_sofa.translated(-1, -4, -30);
     auto obj13 = prog->add_object(sofa, transformation_sofa);
     obj13->add_texture(sofa_texture, "texture_sampler");
 
     matrix4 transformation_door = matrix4::identity();
     transformation_door.scaled(0.03, 0.03, 0.03);
     transformation_door.rotated(-90, 85, 0);
-    transformation_door.translated(-9.75,-6,-25);
+    transformation_door.translated(-9.75, -6, -25);
     auto obj14 = prog->add_object(door, transformation_door);
     obj14->add_texture(door_texture, "texture_sampler");
 
@@ -237,78 +217,21 @@ int main(int argc, char *argv[]) {
     matrix4 transformation_armchair = matrix4::identity();
     transformation_armchair.scaled(0.3, 0.3, 0.3);
     transformation_armchair.rotated(0, -40, 0);
-    transformation_armchair.translated(6,-5,-24);
+    transformation_armchair.translated(6, -5, -24);
     auto obj15 = prog->add_object(armchair, transformation_armchair);
     obj15->add_texture(rug_texture, "texture_sampler");
 
-
-    if (shader_name == "anaglyph") {
-        //CREATE a framebuffer to render current scene to a texture
-        FrameBuffer fbo;
-        auto left_texture = fbo.bind_and_attach_to_texture(width, height);
-        display();
-
-        FrameBuffer fbo2;
-        auto right_texture = fbo.bind_and_attach_to_texture(width, height);
-        matrix4 projection = matrix4::identity();
-        float ratio = width / height;
-        frustum(projection, -ratio + 0.04, ratio + 0.04, -1, 1, 5, 50000);
-        GLuint pro_mat_id = glGetUniformLocation(prog->program_id(), "projection");
-        glUniformMatrix4fv(pro_mat_id, 1, GL_FALSE, &projection.mat[0][0]);
-        TEST_OPENGL_ERROR();
-        display();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-
-        vertex_src = load("../src/shaders/anaglyph/vertex.shd");
-        fragment_src = load("../src/shaders/anaglyph/fragment.shd");
-        shared_prog prog2 = Program::make_program(vertex_src, fragment_src);
-        if (!prog2->is_ready())
+    if (shader_name == "glitch") {
+        if (!setup_glitch(eye, center, up, rectangle))
             return 1;
-        prog2->use();
-        prog2->init_projection_view_matrices(eye, center, up);
-
-        matrix4 trans = matrix4::identity();
-        trans.scaled(14, 14, 14);
-        trans.translated(-3.2, -3.6, -50);
-        auto obj = prog2->add_object(rectangle, trans);
-        obj->add_texture(left_texture, "texture_left");
-        obj->add_texture(right_texture, "texture_right");
-    } else if (shader_name == "depth_of_field") {
-        FrameBuffer fbo1;
-        auto scene_texture = fbo1.bind_and_attach_to_texture(width, height);
-        display();
-
-//        //depth map
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-
-        std::string vertex_src2 = load("../src/shaders/depth_of_field/vertex.shd");
-        std::string fragment_src2 = load("../src/shaders/depth_of_field/ndc_depth_fragment.shd");
-        shared_prog depth_map_program = Program::make_program(vertex_src2, fragment_src2);
-        if (!depth_map_program->is_ready())
-            return 1;
-        depth_map_program->use();
-        depth_map_program->copy(prog);
-        FrameBuffer fbo2;
-        auto depth_texture = fbo2.bind_and_attach_to_texture(width, height);
-        display();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-        std::string vertex_src3 = load("../src/shaders/depth_of_field/vertex.shd");
-        std::string fragment_src3 = load("../src/shaders/depth_of_field/fragment.shd");
-        shared_prog prog3 = Program::make_program(vertex_src3, fragment_src3);
-        if (!prog3->is_ready())
-            return 1;
-        prog3->use();
-        prog3->init_projection_view_matrices(eye, center, up);
-        matrix4 trans = matrix4::identity();
-        trans.scaled(14, 14, 14);
-        trans.translated(-3.2, -3.6, -50);
-        auto obj = prog3->add_object(rectangle, trans);
-        obj->add_texture(scene_texture, "scene_texture");
-        obj->add_texture(depth_texture, "depth_texture");
     }
-
+    else if (shader_name == "anaglyph") {
+        if (!setup_anaglyph(eye, center, up, rectangle, prog))
+            return 1;
+    } else if (shader_name == "depth_of_field") {
+        if (!setup_depth_of_field(eye, center, up, rectangle, prog))
+            return 1;
+    }
     glutMainLoop();
     return 0;
 }

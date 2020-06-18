@@ -60,17 +60,17 @@ namespace pogl {
     shared_prog Program::make_program(const std::string &vertexShader, const std::string &fragmentShader) {
         GLuint vs = compile_shader(GL_VERTEX_SHADER, vertexShader);
         if (vs == 0)
-            return nullptr;
+            return NULL;
         GLuint fs = compile_shader(GL_FRAGMENT_SHADER, fragmentShader);
         if (fs == 0)
-            return nullptr;
+            return NULL;
 
         GLuint program_id = glCreateProgram();
         TEST_OPENGL_ERROR();
         if (program_id == 0) {
             glDeleteShader(vs);
             glDeleteShader(fs);
-            return nullptr;
+            return NULL;
         }
 
         glAttachShader(program_id, vs);
@@ -101,17 +101,14 @@ namespace pogl {
                 std::cerr << "Program " << program_log << std::endl;
                 std::free(program_log);
             }
+            return NULL;
         }
-        p->isReady = link_status == GL_TRUE;
         p->index = programs.size();
         programs.push_back(p);
         return p;
     }
 
 
-    bool Program::is_ready() {
-        return isReady;
-    }
 
 
     void Program::init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up) {

@@ -37,8 +37,6 @@ namespace pogl {
 
         void copy(std::shared_ptr<Program> program);
 
-        bool is_ready();
-
         void use();
 
         void draw();
@@ -53,7 +51,6 @@ namespace pogl {
         GLuint fs_id; //fragment shader id
         matrix4 view;
         matrix4 projection;
-        bool isReady = false;
         unsigned int index = 0;
     };
 

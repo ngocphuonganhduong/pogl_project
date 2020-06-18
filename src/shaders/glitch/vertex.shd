@@ -7,22 +7,11 @@ in vec3 position;
 in vec3 normal;
 in vec2 uv;
 
-
-vec3 light_color = vec3(1.0, 1.0, 1.0);
-vec3 light_position = vec3(0.0, 0.0, -6.0);
-
 out vec2 interpolated_uv;
-out vec4 interpolated_color;
 
 void main() {
     vec4 new_pos =  transformation * vec4(position, 1.0);
     vec3 new_normal = (transformation * vec4(normal, 0.0)).xyz;
-
-    vec3 light_dir = light_position - new_pos.xyz;
-    float coef = dot(normalize(new_normal), normalize(light_dir)) / (dot(light_dir, light_dir) * 0.001f + 1.0f);
-
-    coef = clamp(coef, 0, 1);
-    interpolated_color = vec4(coef * light_color, 1.0);
 
     gl_Position = projection * view * new_pos;
     interpolated_uv = uv;
