@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
 
 
     matrix4 transformation_armchair = matrix4::identity();
-    transformation_armchair.scaled(0.03, 0.03, 0.03);
+    transformation_armchair.scaled(0.3, 0.3, 0.3);
     transformation_armchair.rotated(0, -40, 0);
     transformation_armchair.translated(6,-5,-24);
     auto obj15 = prog->add_object(armchair, transformation_armchair);
