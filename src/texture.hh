@@ -12,7 +12,7 @@ namespace pogl {
         static std::shared_ptr<Texture> create(const char *filename);
 
         Texture(const char *filename);
-        Texture();
+        Texture(GLuint texture_id, GLsizei width, GLsizei height);
 
         int sx;
         int sy;

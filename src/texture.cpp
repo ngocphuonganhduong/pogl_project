@@ -43,8 +43,19 @@ namespace pogl
         return std::make_shared<Texture>(filename);
     }
 
-    Texture::Texture() {
+    Texture::Texture(GLuint texture_id_, GLsizei width, GLsizei height) {
         unit = max_unit;
         max_unit += 2;
+        texture_id = texture_id_;
+        glActiveTexture(GL_TEXTURE0 + unit);
+        TEST_OPENGL_ERROR();
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        TEST_OPENGL_ERROR();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        TEST_OPENGL_ERROR();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        TEST_OPENGL_ERROR();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        TEST_OPENGL_ERROR();
     }
 }

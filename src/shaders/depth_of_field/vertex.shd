@@ -1,0 +1,18 @@
+#version 420
+uniform mat4 view;
+uniform mat4 projection;
+uniform mat4 transformation;
+
+in vec3 position;
+in vec3 normal;
+in vec2 uv;
+
+out vec2 interpolated_uv;
+
+void main() {
+    vec4 new_pos =  transformation * vec4(position, 1.0);
+    vec3 new_normal = (transformation * vec4(normal, 0.0)).xyz;
+
+    gl_Position = projection * view * new_pos;
+    interpolated_uv = uv;
+}

@@ -1,0 +1,31 @@
+#version 420
+uniform sampler2D scene_texture;
+uniform sampler2D depth_texture;
+layout(location=0) out vec4 output_color;
+
+in vec2 interpolated_uv;
+const int MaxHalfWin = 20;
+const float EPSILON = 0.01;
+
+void main() {
+    float depth = texture2D(depth_texture, interpolated_uv).x;
+    vec2 delta = 1.0 / textureSize(scene_texture, 0);
+    int halfWin = int(MaxHalfWin * depth);
+
+    output_color = vec4(0.0) ;
+    vec2 uv;
+    float weight, diff, count = 0;
+    for (int i = -halfWin; i <= halfWin; ++i)
+        for(int j = -halfWin; j <= halfWin; ++j)
+        {
+            uv = interpolated_uv + vec2(delta.x * i, delta.y * j);
+            diff = depth - texture2D(depth_texture, uv).x;
+            if (diff <= EPSILON)
+            {
+                count += 1.0;
+                output_color += texture2D(scene_texture, uv);
+            }
+        }
+    output_color /= count;
+
+}

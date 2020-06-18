@@ -33,9 +33,9 @@ namespace pogl {
 
         shared_prog_obj add_object(const OpenGLObject &obj, const matrix4 &transformation);
 
-        void init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
-                                           const char *pro_name, const char *view_name);
+        void init_projection_view_matrices(const Vector3 &eye, const Vector3 &center, const Vector3 &up);
 
+        void copy(std::shared_ptr<Program> program);
 
         bool is_ready();
 
@@ -51,6 +51,8 @@ namespace pogl {
         GLuint pg_id; //program id
         GLuint vs_id; //vertex shader id
         GLuint fs_id; //fragment shader id
+        matrix4 view;
+        matrix4 projection;
         bool isReady = false;
         unsigned int index = 0;
     };
