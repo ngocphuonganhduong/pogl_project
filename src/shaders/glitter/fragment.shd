@@ -1,0 +1,38 @@
+#version 420
+
+uniform sampler2D texture_sampler;
+uniform float rnd; // [0.0-1.0] rnd is different each frame but it is the same for all pixels in a frame
+uniform float rnd2; //same as rnd2 but [0.0-1.0), used to decide shifting method
+
+layout(location=0) out vec4 output_color;
+
+in vec4 interpolated_color;
+in vec2 interpolated_uv;
+
+float random (vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+const float PHI = 1.61803398874989484820459; // Φ = Golden Ratio 
+
+float gold_noise(in vec2 xy, in float seed)
+{
+    return fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
+}
+
+void main() {
+    
+    vec2 uv = interpolated_uv;
+
+    float rand = 2*gold_noise(gl_FragCoord.xy, random(uv*rnd));
+    float rand2 = 3*gold_noise(gl_FragCoord.xy,random(uv*rnd2));
+
+    vec4 c = texture(texture_sampler, uv);
+
+    if (rand == 0)
+        c = vec4(2, 2, 2, 1);
+    else if (rand2 == 0)
+        c = vec4(2, 2, 0, 1);
+
+    output_color = c*interpolated_color;
+}

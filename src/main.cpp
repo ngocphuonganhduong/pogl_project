@@ -44,9 +44,8 @@ int main(int argc, char *argv[]) {
 
     if (argc < 2) {
         cout << "usage:\n  ./pogl shader_name" << endl;
-        cout
-                << "shaders:\n - tp3_test\n - sepia\n - night_vision\n - glitch\n - depth_map\n - anaglyph - depth_of_field"
-                << endl;
+        cout << "shaders:\n - tp3_test\n - sepia\n - night_vision\n - glitch\n";
+        cout << " - depth_map\n - anaglyph\n - depth_of_field\n - stroboscope\n - glitter"<< endl;
         return 1;
     }
     stbi_set_flip_vertically_on_load(true);
