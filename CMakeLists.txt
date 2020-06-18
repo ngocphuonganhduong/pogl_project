@@ -14,7 +14,7 @@ set(HEADER src/stb_image.h
         src/program.hh
         src/init.hh
         src/obj_loader.hh
-            src/frame_buffer.hh
+        src/frame_buffer.hh
         )
 
 set(SOURCE
@@ -27,7 +27,7 @@ set(SOURCE
         src/init.cpp
         src/texture.cpp
         src/obj_loader.cpp
-            src/frame_buffer.cpp
+        src/frame_buffer.cpp
         )
 
 add_executable(pogl src/main.cpp ${HEADER} ${SOURCE})
