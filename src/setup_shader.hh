@@ -13,5 +13,9 @@ namespace pogl {
 
     bool setup_depth_of_field(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
                               const OpenGLObject &rectangle, shared_prog scene_program);
+
+    bool setup_swirl(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
+                     const OpenGLObject &rectangle, shared_prog scene_program);
+
 }
 

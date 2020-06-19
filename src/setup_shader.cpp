@@ -83,8 +83,8 @@ namespace pogl {
         auto scene_texture = fbo1.bind_and_attach_to_texture(width, height);
         display();
 
-        std::string vertex_src2 = load("../src/shaders/depth_of_field/vertex.shd");
-        std::string fragment_src2 = load("../src/shaders/depth_of_field/ndc_depth_fragment.shd");
+        std::string vertex_src2 = load("../src/shaders/depth_map/vertex.shd");
+        std::string fragment_src2 = load("../src/shaders/depth_map/fragment.shd");
         shared_prog depth_map_program = Program::make_program(vertex_src2, fragment_src2);
         if (depth_map_program == NULL)
             return false;
@@ -110,5 +110,27 @@ namespace pogl {
         obj->add_texture(depth_texture, "depth_texture");
         return true;
     }
+
+    bool setup_swirl(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
+                     const OpenGLObject &rectangle, shared_prog scene_program){
+        FrameBuffer fbo;
+        auto scene_texture = fbo.bind_and_attach_to_texture(width, height);
+        display();
+        std::string vertex_src = load("../src/shaders/swirl/vertex.shd");
+        std::string fragment_src = load("../src/shaders/swirl/fragment.shd");
+        shared_prog swirl_program = Program::make_program(vertex_src, fragment_src);
+        if (swirl_program == NULL)
+            return false;
+        swirl_program->use();
+        swirl_program->init_projection_view_matrices(eye, center, up);
+
+        matrix4 trans = matrix4::identity();
+        trans.scaled(14, 14, 14);
+        trans.translated(-3.2, -3.6, -50);
+        auto obj = swirl_program->add_object(rectangle, trans);
+        obj->add_texture(scene_texture, "texture_sampler");
+        return true;
+    }
+
 
 }

@@ -1,0 +1,44 @@
+#version 420
+uniform sampler2D texture_sampler;
+uniform int current_time;
+
+layout(location=0) out vec4 output_color;
+
+in vec2 interpolated_uv;
+in vec4 interpolated_color;
+
+const float M_PI = 3.14159265;
+const vec2 center = {0.5, 0.5};
+const int focus_time = 5000;
+const float MAX_RADIUS = 0.5; //affected radius, only pixels within this circle will be rotated
+
+void main() {
+    output_color = texture2D(texture_sampler, interpolated_uv);
+
+    //transform uv coordinates into center space
+    vec2 uv = interpolated_uv.xy - center;
+
+    //update MaxRadius according to time function
+    float time_ratio =  float(current_time % focus_time) / focus_time;
+    float MaxRadius = time_ratio * MAX_RADIUS;
+
+    float radius = length(uv);
+
+    //choosing rotation angle: beta = 2 * PI * ratio
+    float ratio;
+    if (radius > MaxRadius) //pixel is outside the affected circle
+        ratio = 0; // no rotation
+    else
+        ratio = radius / MaxRadius; //from center to border: 0 -> 1;
+
+    float alpha = atan(uv.y, uv.x); //origin angle
+    float beta = 2.0 * M_PI * pow(ratio,  1 - time_ratio); //rotation angle
+
+    //rotate uv by angle beta
+    uv =  vec2(radius  * cos(alpha + beta), radius  * sin(alpha + beta));
+
+    //transform uv back to texture coordinates
+    uv += center;
+
+    output_color=texture2D(texture_sampler, uv);
+}

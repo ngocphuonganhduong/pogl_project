@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
     if (argc < 2) {
         cout << "usage:\n  ./pogl shader_name" << endl;
         cout << "shaders:\n - simple\n - sepia\n - night_vision\n - glitch\n";
-        cout << " - depth_map\n - anaglyph\n - depth_of_field\n - stroboscope\n - glitter"<< endl;
+        cout << " - depth_map\n - anaglyph\n - depth_of_field\n - stroboscope\n";
+        cout << " - glitter\n - swirl" << endl;
         return 1;
     }
     stbi_set_flip_vertically_on_load(true);
@@ -36,7 +37,8 @@ int main(int argc, char *argv[]) {
     std::string shader_name(argv[1]);
     std::string main_scene(argv[1]);
     //path from build folder
-    if (shader_name == "anaglyph" || shader_name == "depth_of_field" || shader_name == "glitch") {
+    if (shader_name == "anaglyph" || shader_name == "depth_of_field" ||
+        shader_name == "glitch" || shader_name == "swirl") {
         main_scene = "simple";
     }
 
@@ -49,6 +51,7 @@ int main(int argc, char *argv[]) {
     shared_text sofa_texture = Texture::create("../textures/blue_fabric.jpg");
     shared_text door_texture = Texture::create("../textures/door.jpg");
     shared_text rug_texture = Texture::create("../textures/pink_rug.jpeg");
+    shared_text floor_texture = Texture::create("../textures/floor.jpg");
 
     /** init OpenGLObject - vao, vbo **/
     OpenGLObject teapot(teapot_vbd, normal_smooth_buffer_data, uv_buffer_data);
@@ -94,7 +97,6 @@ int main(int argc, char *argv[]) {
     /** init a program and use it **/
     std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
     std::string fragment_src = load("../src/shaders/" + main_scene + "/fragment.shd");
-
     shared_prog prog = Program::make_program(vertex_src, fragment_src);
     if (prog == NULL)
         return 1;
@@ -109,15 +111,15 @@ int main(int argc, char *argv[]) {
 
     //front wall
     matrix4 transformation1 = matrix4::identity();
-    transformation1.scaled(15, 15, 15);
-    transformation1.translated(0, 0, -50);
+    transformation1.scaled(10, 8, 8);
+    transformation1.translated(-1, 0, -40);
     auto obj1 = prog->add_object(rectangle, transformation1);
     obj1->add_texture(wall_texture, "texture_sampler");
 
     //left wall
     matrix4 transformation2 = matrix4::identity();
-    transformation2.scaled(10, 10, 10);
-    transformation2.translated(20, 0, -12);
+    transformation2.scaled(8, 8, 8);
+    transformation2.translated(24, 0, -12);
     transformation2.rotated(0, 85, 0);
     auto obj2 = prog->add_object(rectangle, transformation2);
     obj2->add_texture(wall_texture, "texture_sampler");
@@ -132,19 +134,19 @@ int main(int argc, char *argv[]) {
 
     //ground
     matrix4 transformation4 = matrix4::identity();
-    transformation4.scaled(10, 10, 10);
-    transformation4.translated(0, 20, -10);
+    transformation4.scaled(10, 11, 10);
+    transformation4.translated(0, 21, -10);
     transformation4.rotated(-80, 0, 0);
     auto obj4 = prog->add_object(rectangle, transformation4);
-    obj4->add_texture(brick, "texture_sampler");
+    obj4->add_texture(floor_texture, "texture_sampler");
 
     //top
     matrix4 transformation5 = matrix4::identity();
     transformation5.scaled(10, 10, 10);
-    transformation5.translated(0, -20, -10);
+    transformation5.translated(0, -20, -11);
     transformation5.rotated(80, 0, 0);
     auto obj5 = prog->add_object(rectangle, transformation5);
-    obj5->add_texture(white, "texture_sampler");
+    obj5->add_texture(floor_texture, "texture_sampler");
 
     //bunny
     matrix4 transformation7 = matrix4::identity();
@@ -224,12 +226,24 @@ int main(int argc, char *argv[]) {
     if (shader_name == "glitch") {
         if (!setup_glitch(eye, center, up, rectangle))
             return 1;
-    }
-    else if (shader_name == "anaglyph") {
+    } else if (shader_name == "anaglyph") {
         if (!setup_anaglyph(eye, center, up, rectangle, prog))
             return 1;
     } else if (shader_name == "depth_of_field") {
+        Obj plane_obj = Obj();
+        plane_obj.load_file("../src/vbo/paper_airplane.obj");
+        OpenGLObject plane(plane_obj.get_vbd(), plane_obj.get_normals(), plane_obj.get_uv());
+        matrix4 transformation_paper = matrix4::identity();
+        transformation_paper.scaled(1, 1, 1);
+        transformation_paper.rotated(0, 0, 30);
+        transformation_paper.rotated(-45, 90, 0);
+        transformation_paper.translated(0.25, -0.5, 14);
+        auto obj16 = prog->add_object(plane, transformation_paper);
+        obj16->add_texture(white, "texture_sampler");
         if (!setup_depth_of_field(eye, center, up, rectangle, prog))
+            return 1;
+    } else if (shader_name == "swirl") {
+        if (!setup_swirl(eye, center, up, rectangle, prog))
             return 1;
     }
     glutMainLoop();
