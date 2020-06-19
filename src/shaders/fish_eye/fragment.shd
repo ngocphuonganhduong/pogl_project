@@ -1,0 +1,36 @@
+#version 420
+
+uniform sampler2D texture_sampler;
+layout(location=0) out vec4 output_color;
+
+float M_PI = 3.14159265;
+
+in vec2 interpolated_uv_position;
+in vec4 interpolated_color;
+
+void main() {
+    vec2 uv = interpolated_uv_position;
+
+    // normalization
+    float x = 2*uv.x - 1;
+    float y = 2*uv.y - 1;
+
+    // z on hemisphere surface
+    float xy = sqrt(x*x + y*y);
+    float z = sqrt(1 - xy * xy);
+
+    // hemisphere radius in polar coord
+    float r = atan(sqrt(x*x + y*y), z)/M_PI;
+
+    if (sqrt(x*x + y*y) <= 1)
+    {
+        float PHI = atan(y, x);
+        //texture mapping
+        uv = vec2(r*cos(PHI) + 0.5, r*sin(PHI) + 0.5);
+
+        vec4 c = texture2D(texture_sampler, uv);
+        output_color = c * interpolated_color;
+    }
+    else
+        output_color = vec4(0);
+}

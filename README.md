@@ -10,6 +10,8 @@ stb image loading [here](https://github.com/nothings/stb)
  * Framebuffer with rendering a scene to a texture: [here](https://learnopengl.com/Advanced-OpenGL/Framebuffers)
  * swirl [here](http://supercomputingblog.com/openmp/image-twist-and-swirl-algorithm/)
  * swirl - rotation uv [here](https://matthew-brett.github.io/teaching/rotation_2d.html)
+ * NDC depth map for depth of field effect: [Depth testing](https://learnopengl.com/Advanced-OpenGL/Depth-testing)
+ * The fish eye shader formulas are based on: [this website](http://paulbourke.net/dome/fisheye/)
  
 #### .Obj data sources:
 (before being triangulated using Blender):

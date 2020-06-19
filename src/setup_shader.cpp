@@ -132,5 +132,26 @@ namespace pogl {
         return true;
     }
 
+     bool setup_fisheye(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
+                     const OpenGLObject &rectangle, shared_prog scene_program){
+        FrameBuffer fbo;
+        auto scene_texture = fbo.bind_and_attach_to_texture(width, height);
+        display();
+        std::string vertex_src = load("../src/shaders/fish_eye/vertex.shd");
+        std::string fragment_src = load("../src/shaders/fish_eye/fragment.shd");
+        shared_prog fisheye_program = Program::make_program(vertex_src, fragment_src);
+        if (fisheye_program == NULL)
+            return false;
+        fisheye_program->use();
+        fisheye_program->init_projection_view_matrices(eye, center, up);
+
+        matrix4 trans = matrix4::identity();
+        trans.scaled(14, 14, 14);
+        trans.translated(-3.2, -3.6, -50);
+        auto obj = fisheye_program->add_object(rectangle, trans);
+        obj->add_texture(scene_texture, "texture_sampler");
+        return true;
+    }
+
 
 }

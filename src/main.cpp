@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         cout << "usage:\n  ./pogl shader_name" << endl;
         cout << "shaders:\n - simple\n - sepia\n - night_vision\n - glitch\n";
         cout << " - depth_map\n - anaglyph\n - depth_of_field\n - stroboscope\n";
-        cout << " - glitter\n - swirl" << endl;
+        cout << " - glitter\n - swirl\n - fish_eye" << endl;
         return 1;
     }
     stbi_set_flip_vertically_on_load(true);
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     std::string main_scene(argv[1]);
     //path from build folder
     if (shader_name == "anaglyph" || shader_name == "depth_of_field" ||
-        shader_name == "glitch" || shader_name == "swirl") {
+        shader_name == "glitch" || shader_name == "swirl" || shader_name == "fish_eye") {
         main_scene = "simple";
     }
 
@@ -244,6 +244,9 @@ int main(int argc, char *argv[]) {
             return 1;
     } else if (shader_name == "swirl") {
         if (!setup_swirl(eye, center, up, rectangle, prog))
+            return 1;
+    }else if (shader_name == "fish_eye") {
+        if (!setup_fisheye(eye, center, up, rectangle, prog))
             return 1;
     }
     glutMainLoop();

@@ -17,5 +17,7 @@ namespace pogl {
     bool setup_swirl(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
                      const OpenGLObject &rectangle, shared_prog scene_program);
 
+    bool setup_fisheye(const Vector3 &eye, const Vector3 &center, const Vector3 &up,
+                     const OpenGLObject &rectangle, shared_prog scene_program);
 }
 
