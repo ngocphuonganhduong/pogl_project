@@ -7,12 +7,18 @@ layout(location=0) out vec4 output_color;
 in vec2 interpolated_uv;
 const float EPSILON = 0.01;
 const int focus_time = 4000;
-const int MaxHalfWinTOTAL = 30;
+const int MaxHalfWinTOTAL = 20;
+const int MaxHalfFocusLength = 5;
+const float a = 5;;
+
 void main() {
     int MaxHalfWin = int(MaxHalfWinTOTAL * (1 - sqrt(float(current_time % focus_time) / focus_time)));
     float depth = texture2D(depth_texture, interpolated_uv).x;
     vec2 delta = 1.0 / textureSize(scene_texture, 0);
-    int halfWin = int(MaxHalfWin * depth);
+    int halfWin = int(MaxHalfWin * clamp(depth * a, 0.0, 1.0));
+
+    if (halfWin < MaxHalfFocusLength) //increase depth of field
+        halfWin = 0;
 
     output_color = vec4(0.0) ;
     vec2 uv;
