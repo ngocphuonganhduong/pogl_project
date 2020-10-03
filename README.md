@@ -1,4 +1,5 @@
 # pogl_project
+Collection of shaders by Sophie STARCK and Ngoc Phuong Anh DUONG.\
 The project is heavily based on [POGL course and TPs](http://jo.fabrizio.free.fr/teaching/synt/index.php) at EPITA.
 
 ### Usage:
@@ -24,6 +25,23 @@ shaders:
  - swirl
  - fish_eye
 ```
+Examples:
+```
+./pogl night_vision
+```
+![Night vision|400x400](./output/night_vision.jpg)
+
+```
+./pogl sepia
+```
+![Sephia|400x400](./output/sepia.jpg)
+
+```
+./pogl glitch
+```
+![glitch|400x400](./output/glitch.GIF)
+
+
 ### Used libraries / dependencies
 stb image loading [here](https://github.com/nothings/stb)
 
