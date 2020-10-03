@@ -9,7 +9,7 @@ mkdir build
 cd build
 cmake .. && make 
 ```
-Usage:
+To run:
 ```
 ./pogl <shader>
 shaders:
