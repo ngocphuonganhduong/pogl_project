@@ -27,19 +27,23 @@ shaders:
 ```
 Examples:
 ```
-./pogl night_vision
+./pogl fish_eye
 ```
-![Night vision|400x400](./output/night_vision.jpg)
+![fish eye](./output/fish_eye.jpg)
 
 ```
-./pogl sepia
+./pogl fish_eye
 ```
-![Sephia|400x400](./output/sepia.jpg)
+![stroboscope](./output/stroboscope.GIF)
 
 ```
 ./pogl glitch
 ```
 ![glitch|400x400](./output/glitch.GIF)
+```
+./pogl swirl
+```
+![glitch|400x400](./output/swirl.GIF)
 
 
 ### Used libraries / dependencies

@@ -10,7 +10,7 @@ namespace pogl {
         std::string line;
         std::string file_content = "";
         if (input_src_file.fail()) {
-            std::cerr << "FAIL\n";
+            std::cerr << "Cannot open file " << filename << std::endl;
             return "";
         }
         while (getline(input_src_file, line)) {

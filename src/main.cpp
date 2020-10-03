@@ -1,7 +1,6 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <iostream>
-#include <fstream>
 #include "vbo/teapot.hh"
 #include "vbo/rectangle.hh"
 #include "init.hh"
@@ -13,9 +12,37 @@
 using namespace pogl;
 using namespace std;
 
+void print_help() {
+    cout << "usage:\n  ./pogl shader_name" << endl;
+    cout << "shaders:\n - simple\n - sepia\n - night_vision\n - glitch\n";
+    cout << " - depth_map\n - anaglyph\n - depth_of_field\n - stroboscope\n";
+    cout << " - glitter\n - swirl\n - fish_eye" << endl;
+}
+
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        print_help();
+        return 0;
+    }
+    std::string shader_name(argv[1]);
+    std::string main_scene(argv[1]);
+
+    //path from build folder
+    if (shader_name == "anaglyph" || shader_name == "depth_of_field" ||
+        shader_name == "glitch" || shader_name == "swirl" || shader_name == "fish_eye") {
+        main_scene = "simple";
+    }
+
+    /** load shader sources **/
+    std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
+    std::string fragment_src = load("../src/shaders/" + main_scene + "/fragment.shd");
+    if (vertex_src.empty() || fragment_src.empty()) {
+        print_help();
+        return 1;
+    }
+
     width = 1024;
-    height = 1024;
+    height = 900;
 #if defined(SAVE_RENDER)
     saved = true;
 #endif
@@ -25,22 +52,7 @@ int main(int argc, char *argv[]) {
         return 1;
     init_GL();
 
-    if (argc < 2) {
-        cout << "usage:\n  ./pogl shader_name" << endl;
-        cout << "shaders:\n - simple\n - sepia\n - night_vision\n - glitch\n";
-        cout << " - depth_map\n - anaglyph\n - depth_of_field\n - stroboscope\n";
-        cout << " - glitter\n - swirl\n - fish_eye" << endl;
-        return 1;
-    }
     stbi_set_flip_vertically_on_load(true);
-
-    std::string shader_name(argv[1]);
-    std::string main_scene(argv[1]);
-    //path from build folder
-    if (shader_name == "anaglyph" || shader_name == "depth_of_field" ||
-        shader_name == "glitch" || shader_name == "swirl" || shader_name == "fish_eye") {
-        main_scene = "simple";
-    }
 
     /** init TEXTURE **/
     shared_text texture1 = Texture::create("../textures/texture.tga");
@@ -95,8 +107,6 @@ int main(int argc, char *argv[]) {
     OpenGLObject armchair(armchair_obj.get_vbd(), armchair_obj.get_normals(), armchair_obj.get_uv());
 
     /** init a program and use it **/
-    std::string vertex_src = load("../src/shaders/" + main_scene + "/vertex.shd");
-    std::string fragment_src = load("../src/shaders/" + main_scene + "/fragment.shd");
     shared_prog prog = Program::make_program(vertex_src, fragment_src);
     if (prog == NULL)
         return 1;
@@ -245,7 +255,7 @@ int main(int argc, char *argv[]) {
     } else if (shader_name == "swirl") {
         if (!setup_swirl(eye, center, up, rectangle, prog))
             return 1;
-    }else if (shader_name == "fish_eye") {
+    } else if (shader_name == "fish_eye") {
         if (!setup_fisheye(eye, center, up, rectangle, prog))
             return 1;
     }
