@@ -32,7 +32,7 @@ Examples:
 ![fish eye](./output/fish_eye.jpg)
 
 ```
-./pogl fish_eye
+./pogl stroboscope
 ```
 ![stroboscope](./output/stroboscope.GIF)
 
